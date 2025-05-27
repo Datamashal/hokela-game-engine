@@ -40,14 +40,7 @@ const swaggerOptions = {
         url: process.env.API_URL || 'https://hokela-logger.onrender.com',
         description: 'Production server',
       },
-      {
-        //production
-        url: 'https://hokela-logger.onrender.com',
-        description: 'Production server',
-        url: 'http://localhost:5000',
-        description: 'Development server',
-      },
-    ],
+          ],
   },
   apis: ['./src/routes/*.js'], // Path to the API files
 };
