@@ -1,40 +1,56 @@
 
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { BarChart3, TrendingUp, Clock, AlertTriangle } from "lucide-react";
+import { BarChart3, TrendingUp, Clock, AlertTriangle, Activity } from "lucide-react";
+
+interface AnalyticsData {
+  requestVolume: Array<{ time: string; requests: number }>;
+  processingTime: Array<{ endpoint: string; avgTime: number }>;
+  errorRate: Array<{ name: string; value: number; color: string }>;
+  logsPerEndpoint: Array<{ endpoint: string; logs: number }>;
+  totalRequests: number;
+  avgResponseTime: number;
+  activeServices: number;
+  errorRatePercent: number;
+}
 
 const Analytics = () => {
-  // Mock analytics data
-  const requestVolumeData = [
-    { time: '00:00', requests: 120 },
-    { time: '04:00', requests: 89 },
-    { time: '08:00', requests: 340 },
-    { time: '12:00', requests: 520 },
-    { time: '16:00', requests: 380 },
-    { time: '20:00', requests: 250 },
-  ];
+  const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const processingTimeData = [
-    { endpoint: '/api/login', avgTime: 145 },
-    { endpoint: '/api/users', avgTime: 89 },
-    { endpoint: '/api/upload', avgTime: 2340 },
-    { endpoint: '/api/payments', avgTime: 567 },
-    { endpoint: '/api/notifications', avgTime: 123 },
-  ];
+  useEffect(() => {
+    // TODO: Fetch analytics data from API
+    // const fetchAnalytics = async () => {
+    //   setIsLoading(true);
+    //   try {
+    //     const response = await fetch('/api/analytics');
+    //     const data = await response.json();
+    //     setAnalyticsData(data);
+    //   } catch (error) {
+    //     console.error('Error fetching analytics:', error);
+    //   } finally {
+    //     setIsLoading(false);
+    //   }
+    // };
+    // fetchAnalytics();
+  }, []);
 
-  const errorRateData = [
-    { name: '2xx Success', value: 75, color: '#22c55e' },
-    { name: '4xx Client Error', value: 15, color: '#f59e0b' },
-    { name: '5xx Server Error', value: 10, color: '#ef4444' },
-  ];
-
-  const logsPerEndpointData = [
-    { endpoint: '/api/users', logs: 1250 },
-    { endpoint: '/api/login', logs: 890 },
-    { endpoint: '/api/payments', logs: 567 },
-    { endpoint: '/api/upload', logs: 445 },
-    { endpoint: '/api/notifications', logs: 234 },
-  ];
+  if (!analyticsData) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-center h-[400px] text-slate-400">
+          <div className="text-center">
+            <BarChart3 className="h-12 w-12 mx-auto mb-4 opacity-50" />
+            <p className="text-lg mb-2">No analytics data yet</p>
+            <p className="text-sm">
+              {isLoading ? 'Loading analytics...' : 'Analytics will be generated once logs start flowing through the system'}
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -48,8 +64,8 @@ const Analytics = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white">2,847</div>
-            <p className="text-blue-300 text-xs">+12% from yesterday</p>
+            <div className="text-2xl font-bold text-white">{analyticsData.totalRequests.toLocaleString()}</div>
+            <p className="text-blue-300 text-xs">Real-time data</p>
           </CardContent>
         </Card>
 
@@ -61,8 +77,8 @@ const Analytics = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white">234ms</div>
-            <p className="text-green-300 text-xs">-8% from yesterday</p>
+            <div className="text-2xl font-bold text-white">{analyticsData.avgResponseTime}ms</div>
+            <p className="text-green-300 text-xs">Calculated from logs</p>
           </CardContent>
         </Card>
 
@@ -74,8 +90,8 @@ const Analytics = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white">5</div>
-            <p className="text-purple-300 text-xs">All services healthy</p>
+            <div className="text-2xl font-bold text-white">{analyticsData.activeServices}</div>
+            <p className="text-purple-300 text-xs">Services logging data</p>
           </CardContent>
         </Card>
 
@@ -87,8 +103,8 @@ const Analytics = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white">2.3%</div>
-            <p className="text-red-300 text-xs">+0.5% from yesterday</p>
+            <div className="text-2xl font-bold text-white">{analyticsData.errorRatePercent}%</div>
+            <p className="text-red-300 text-xs">From recent logs</p>
           </CardContent>
         </Card>
       </div>
@@ -101,28 +117,37 @@ const Analytics = () => {
             <CardTitle className="text-white">Request Volume Over Time</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={requestVolumeData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#475569" />
-                <XAxis dataKey="time" stroke="#94a3b8" />
-                <YAxis stroke="#94a3b8" />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: '#1e293b', 
-                    border: '1px solid #475569',
-                    borderRadius: '8px',
-                    color: '#ffffff'
-                  }} 
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="requests" 
-                  stroke="#3b82f6" 
-                  strokeWidth={3}
-                  dot={{ fill: '#3b82f6', strokeWidth: 2, r: 4 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
+            {analyticsData.requestVolume.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={analyticsData.requestVolume}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#475569" />
+                  <XAxis dataKey="time" stroke="#94a3b8" />
+                  <YAxis stroke="#94a3b8" />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: '#1e293b', 
+                      border: '1px solid #475569',
+                      borderRadius: '8px',
+                      color: '#ffffff'
+                    }} 
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="requests" 
+                    stroke="#3b82f6" 
+                    strokeWidth={3}
+                    dot={{ fill: '#3b82f6', strokeWidth: 2, r: 4 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex items-center justify-center h-[300px] text-slate-400">
+                <div className="text-center">
+                  <Activity className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                  <p>No request volume data available</p>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -132,22 +157,31 @@ const Analytics = () => {
             <CardTitle className="text-white">Avg Processing Time by Endpoint</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={processingTimeData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#475569" />
-                <XAxis dataKey="endpoint" stroke="#94a3b8" />
-                <YAxis stroke="#94a3b8" />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: '#1e293b', 
-                    border: '1px solid #475569',
-                    borderRadius: '8px',
-                    color: '#ffffff'
-                  }} 
-                />
-                <Bar dataKey="avgTime" fill="#10b981" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+            {analyticsData.processingTime.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={analyticsData.processingTime}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#475569" />
+                  <XAxis dataKey="endpoint" stroke="#94a3b8" />
+                  <YAxis stroke="#94a3b8" />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: '#1e293b', 
+                      border: '1px solid #475569',
+                      borderRadius: '8px',
+                      color: '#ffffff'
+                    }} 
+                  />
+                  <Bar dataKey="avgTime" fill="#10b981" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex items-center justify-center h-[300px] text-slate-400">
+                <div className="text-center">
+                  <Clock className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                  <p>No processing time data available</p>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -157,31 +191,40 @@ const Analytics = () => {
             <CardTitle className="text-white">Response Status Distribution</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={errorRateData}
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={100}
-                  fill="#8884d8"
-                  dataKey="value"
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                >
-                  {errorRateData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: '#1e293b', 
-                    border: '1px solid #475569',
-                    borderRadius: '8px',
-                    color: '#ffffff'
-                  }} 
-                />
-              </PieChart>
-            </ResponsiveContainer>
+            {analyticsData.errorRate.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={analyticsData.errorRate}
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={100}
+                    fill="#8884d8"
+                    dataKey="value"
+                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  >
+                    {analyticsData.errorRate.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: '#1e293b', 
+                      border: '1px solid #475569',
+                      borderRadius: '8px',
+                      color: '#ffffff'
+                    }} 
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex items-center justify-center h-[300px] text-slate-400">
+                <div className="text-center">
+                  <AlertTriangle className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                  <p>No status distribution data available</p>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -191,22 +234,31 @@ const Analytics = () => {
             <CardTitle className="text-white">Logs per Endpoint</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={logsPerEndpointData} layout="horizontal">
-                <CartesianGrid strokeDasharray="3 3" stroke="#475569" />
-                <XAxis type="number" stroke="#94a3b8" />
-                <YAxis dataKey="endpoint" type="category" stroke="#94a3b8" width={120} />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: '#1e293b', 
-                    border: '1px solid #475569',
-                    borderRadius: '8px',
-                    color: '#ffffff'
-                  }} 
-                />
-                <Bar dataKey="logs" fill="#8b5cf6" radius={[0, 4, 4, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+            {analyticsData.logsPerEndpoint.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={analyticsData.logsPerEndpoint} layout="horizontal">
+                  <CartesianGrid strokeDasharray="3 3" stroke="#475569" />
+                  <XAxis type="number" stroke="#94a3b8" />
+                  <YAxis dataKey="endpoint" type="category" stroke="#94a3b8" width={120} />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: '#1e293b', 
+                      border: '1px solid #475569',
+                      borderRadius: '8px',
+                      color: '#ffffff'
+                    }} 
+                  />
+                  <Bar dataKey="logs" fill="#8b5cf6" radius={[0, 4, 4, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex items-center justify-center h-[300px] text-slate-400">
+                <div className="text-center">
+                  <BarChart3 className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                  <p>No endpoint data available</p>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
