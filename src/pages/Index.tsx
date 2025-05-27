@@ -14,7 +14,7 @@ const Index = () => {
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-white mb-2 flex items-center gap-3">
             <Activity className="h-10 w-10 text-blue-400" />
-            LogFlow Dashboard
+            Hokela API LogFlow Dashboard
           </h1>
           <p className="text-slate-400 text-lg">
             Real-time log monitoring and analytics platform

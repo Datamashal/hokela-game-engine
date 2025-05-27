@@ -8,49 +8,51 @@ import { Activity, AlertCircle, CheckCircle, Info, XCircle } from "lucide-react"
 interface LogEntry {
   id: string;
   timestamp: string;
-  level: 'info' | 'warn' | 'error' | 'success';
+  level: 'info' | 'warn' | 'error' | 'success' | 'debug';
   message: string;
   service: string;
   endpoint?: string;
   statusCode?: number;
   processingTime?: number;
+  userId?: string;
+  requestId?: string;
 }
 
 const LiveLogs = () => {
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [isConnected, setIsConnected] = useState(false);
 
-  // Simulate real-time log streaming
   useEffect(() => {
-    const interval = setInterval(() => {
-      const newLog: LogEntry = {
-        id: Math.random().toString(36).substr(2, 9),
-        timestamp: new Date().toISOString(),
-        level: ['info', 'warn', 'error', 'success'][Math.floor(Math.random() * 4)] as LogEntry['level'],
-        message: [
-          'User authentication successful',
-          'Database connection established',
-          'API rate limit exceeded',
-          'File upload completed',
-          'Cache invalidated',
-          'Request timeout occurred',
-          'Payment processed successfully'
-        ][Math.floor(Math.random() * 7)],
-        service: ['auth-service', 'payment-service', 'user-service', 'file-service'][Math.floor(Math.random() * 4)],
-        endpoint: ['/api/login', '/api/users', '/api/upload', '/api/payments'][Math.floor(Math.random() * 4)],
-        statusCode: [200, 201, 400, 401, 500][Math.floor(Math.random() * 5)],
-        processingTime: Math.floor(Math.random() * 1000) + 50
-      };
+    // TODO: Initialize WebSocket connection to backend
+    // const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:5000';
+    // const socket = new WebSocket(wsUrl);
+    
+    // socket.onopen = () => {
+    //   console.log('WebSocket connected');
+    //   setIsConnected(true);
+    // };
 
-      setLogs(prev => [newLog, ...prev.slice(0, 49)]); // Keep only latest 50 logs
-    }, 2000);
+    // socket.onmessage = (event) => {
+    //   const newLog = JSON.parse(event.data);
+    //   setLogs(prev => [newLog, ...prev.slice(0, 49)]);
+    // };
 
-    setIsConnected(true);
+    // socket.onclose = () => {
+    //   console.log('WebSocket disconnected');
+    //   setIsConnected(false);
+    // };
 
-    return () => {
-      clearInterval(interval);
-      setIsConnected(false);
-    };
+    // socket.onerror = (error) => {
+    //   console.error('WebSocket error:', error);
+    //   setIsConnected(false);
+    // };
+
+    // return () => {
+    //   socket.close();
+    // };
+
+    // Temporary: Show disconnected state until WebSocket is implemented
+    setIsConnected(false);
   }, []);
 
   const getLogIcon = (level: LogEntry['level']) => {
@@ -59,6 +61,7 @@ const LiveLogs = () => {
       case 'warn': return <AlertCircle className="h-4 w-4 text-yellow-400" />;
       case 'error': return <XCircle className="h-4 w-4 text-red-400" />;
       case 'success': return <CheckCircle className="h-4 w-4 text-green-400" />;
+      case 'debug': return <Info className="h-4 w-4 text-gray-400" />;
     }
   };
 
@@ -68,6 +71,7 @@ const LiveLogs = () => {
       case 'warn': return 'bg-yellow-500/10 border-yellow-500/20 text-yellow-300';
       case 'error': return 'bg-red-500/10 border-red-500/20 text-red-300';
       case 'success': return 'bg-green-500/10 border-green-500/20 text-green-300';
+      case 'debug': return 'bg-gray-500/10 border-gray-500/20 text-gray-300';
     }
   };
 
@@ -89,45 +93,60 @@ const LiveLogs = () => {
       </CardHeader>
       <CardContent>
         <ScrollArea className="h-[600px] w-full">
-          <div className="space-y-3">
-            {logs.map((log) => (
-              <div
-                key={log.id}
-                className={`p-4 rounded-lg border transition-all duration-200 hover:scale-[1.02] ${getLogColor(log.level)}`}
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex items-start gap-3 flex-1">
-                    {getLogIcon(log.level)}
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-white mb-1">{log.message}</p>
-                      <div className="flex items-center gap-3 text-xs text-slate-400">
-                        <span>{new Date(log.timestamp).toLocaleTimeString()}</span>
-                        <Badge variant="outline" className="text-xs">
-                          {log.service}
-                        </Badge>
-                        {log.endpoint && (
-                          <span className="text-slate-500">{log.endpoint}</span>
-                        )}
+          {logs.length === 0 ? (
+            <div className="flex items-center justify-center h-full text-slate-400">
+              <div className="text-center">
+                <Activity className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p className="text-lg mb-2">No live logs yet</p>
+                <p className="text-sm">
+                  {isConnected ? 'Waiting for log entries...' : 'Connect to backend to see live logs'}
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {logs.map((log) => (
+                <div
+                  key={log.id}
+                  className={`p-4 rounded-lg border transition-all duration-200 hover:scale-[1.02] ${getLogColor(log.level)}`}
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex items-start gap-3 flex-1">
+                      {getLogIcon(log.level)}
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-white mb-1">{log.message}</p>
+                        <div className="flex items-center gap-3 text-xs text-slate-400">
+                          <span>{new Date(log.timestamp).toLocaleTimeString()}</span>
+                          <Badge variant="outline" className="text-xs">
+                            {log.service}
+                          </Badge>
+                          {log.endpoint && (
+                            <span className="text-slate-500">{log.endpoint}</span>
+                          )}
+                          {log.requestId && (
+                            <span className="text-slate-500 font-mono">ID: {log.requestId}</span>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-2 text-xs text-slate-400">
-                    {log.statusCode && (
-                      <Badge 
-                        variant={log.statusCode >= 400 ? "destructive" : "secondary"}
-                        className="text-xs"
-                      >
-                        {log.statusCode}
-                      </Badge>
-                    )}
-                    {log.processingTime && (
-                      <span>{log.processingTime}ms</span>
-                    )}
+                    <div className="flex items-center gap-2 text-xs text-slate-400">
+                      {log.statusCode && (
+                        <Badge 
+                          variant={log.statusCode >= 400 ? "destructive" : "secondary"}
+                          className="text-xs"
+                        >
+                          {log.statusCode}
+                        </Badge>
+                      )}
+                      {log.processingTime && (
+                        <span>{log.processingTime}ms</span>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </ScrollArea>
       </CardContent>
     </Card>
