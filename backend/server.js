@@ -41,6 +41,9 @@ const swaggerOptions = {
         description: 'Production server',
       },
       {
+        //production
+        url: 'https://hokela-logger.onrender.com',
+        description: 'Production server',
         url: 'http://localhost:5000',
         description: 'Development server',
       },
@@ -128,7 +131,7 @@ const startServer = async () => {
   
   server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
-    console.log(`Swagger UI available at ${process.env.API_URL || 'http://localhost:5000'}/api-docs`);
+    console.log(`Swagger UI available at ${process.env.API_URL || 'https://hokela-logger.onrender.com'}/api-docs`);
   });
 };
 
