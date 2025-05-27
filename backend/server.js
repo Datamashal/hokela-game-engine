@@ -21,7 +21,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: process.env.FRONTEND_URL || "http://localhost:8080",
+    origin: process.env.FRONTEND_URL || "https://hokela-api-logflow.vercel.app",
     methods: ["GET", "POST"]
   }
 });
@@ -31,13 +31,17 @@ const swaggerOptions = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'LogFlow API',
+      title: 'Hokela API LogFlow',
       version: '1.0.0',
-      description: 'Real-time log monitoring and analytics API',
+      description: 'Real-time log monitoring and analytics API for Hokela services',
     },
     servers: [
       {
-        url: process.env.API_URL || 'http://localhost:5000',
+        url: process.env.API_URL || 'https://hokela-logger.onrender.com',
+        description: 'Production server',
+      },
+      {
+        url: 'http://localhost:5000',
         description: 'Development server',
       },
     ],
@@ -60,7 +64,10 @@ const limiter = rateLimit({
 
 // Middleware
 app.use(limiter);
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || "https://hokela-api-logflow.vercel.app",
+  credentials: true
+}));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('combined'));
@@ -81,7 +88,8 @@ app.get('/health', (req, res) => {
   res.status(200).json({
     status: 'OK',
     timestamp: new Date().toISOString(),
-    uptime: process.uptime()
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV || 'development'
   });
 });
 
@@ -102,10 +110,10 @@ app.use('*', (req, res) => {
 // Database connection
 const connectDB = async () => {
   try {
-await mongoose.connect(process.env.MONGODB_URI || "mongodb+srv://logger:logger%40123@cluster0.yyz4nrx.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+    await mongoose.connect(process.env.MONGODB_URI || "mongodb+srv://logger:logger%40123@cluster0.yyz4nrx.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
     console.log('MongoDB connected successfully');
   } catch (error) {
     console.error('MongoDB connection error:', error);
@@ -120,7 +128,7 @@ const startServer = async () => {
   
   server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
-    console.log(`Swagger UI available at http://localhost:${PORT}/api-docs`);
+    console.log(`Swagger UI available at ${process.env.API_URL || 'http://localhost:5000'}/api-docs`);
   });
 };
 
