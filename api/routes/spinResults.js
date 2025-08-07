@@ -1,6 +1,7 @@
 
 const express = require('express');
 const router = express.Router();
+const { mapPrizeToProductId, isProductWin } = require('../utils/productMapping');
 
 // Enhanced CORS middleware for all routes
 router.use((req, res, next) => {
@@ -270,7 +271,7 @@ router.post('/', async (req, res) => {
     console.log('Received spin result data:', req.body);
     console.log('Request headers:', req.headers);
     
-    const { name, email, location, agent_name, prize, is_win } = req.body;
+    const { name, email, location, agent_name, prize, is_win, agent_id } = req.body;
     
     // Enhanced validation with more detailed error messages
     const missingFields = [];
@@ -312,6 +313,42 @@ router.post('/', async (req, res) => {
     // Test connection
     await connection.query('SELECT 1');
     console.log('Database connection test successful');
+
+    // If it's a win, check inventory and update stock
+    let finalPrize = prize;
+    let finalIsWin = is_win;
+    
+    if (is_win && agent_id && isProductWin(prize)) {
+      // Use product mapping utility to get standardized product ID
+      const productId = mapPrizeToProductId(prize);
+
+      console.log(`Checking inventory for product: ${productId} (from prize: ${prize}), agent: ${agent_id}`);
+
+      // Check if product is available in inventory
+      const [inventory] = await connection.query(
+        'SELECT * FROM product_inventory WHERE product_id = ? AND agent_id = ? AND available_quantity > 0',
+        [productId, agent_id]
+      );
+
+      if (inventory.length === 0) {
+        console.log(`No inventory found for product ${productId}, agent ${agent_id}. Converting to "Try Again"`);
+        // If no inventory available, convert to "Try Again"
+        finalPrize = 'Try Again';
+        finalIsWin = false;
+      } else {
+        // Update inventory - decrease available quantity
+        await connection.query(
+          `UPDATE product_inventory 
+           SET available_quantity = available_quantity - 1, 
+               distributed_quantity = distributed_quantity + 1,
+               updated_at = CURRENT_TIMESTAMP
+           WHERE product_id = ? AND agent_id = ?`,
+          [productId, agent_id]
+        );
+        
+        console.log(`Inventory updated for product ${productId}. Remaining: ${inventory[0].available_quantity - 1}`);
+      }
+    }
     
     // Log before database insertion
     console.log('Attempting to insert into database with values:', { 
@@ -319,8 +356,8 @@ router.post('/', async (req, res) => {
       email: email.trim(), 
       location: location.trim(), 
       agent_name: agent_name ? agent_name.trim() : null, 
-      prize: prize.trim(), 
-      is_win: Boolean(is_win)
+      prize: finalPrize.trim(), 
+      is_win: Boolean(finalIsWin)
     });
     
     // Insert data into database with proper error handling
@@ -331,8 +368,8 @@ router.post('/', async (req, res) => {
         email.trim(), 
         location.trim(), 
         agent_name ? agent_name.trim() : null, 
-        prize.trim(), 
-        Boolean(is_win)
+        finalPrize.trim(), 
+        Boolean(finalIsWin)
       ]
     );
     

@@ -153,6 +153,27 @@ const initDb = async () => {
         INDEX idx_product_id (product_id)
       )
     `);
+
+    // Create product_inventory table if it doesn't exist
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS product_inventory (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        product_id VARCHAR(50) NOT NULL,
+        product_name VARCHAR(100) NOT NULL,
+        total_quantity INT NOT NULL DEFAULT 0,
+        available_quantity INT NOT NULL DEFAULT 0,
+        distributed_quantity INT NOT NULL DEFAULT 0,
+        agent_id VARCHAR(50) NOT NULL,
+        agent_name VARCHAR(100) NOT NULL,
+        location VARCHAR(100) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        INDEX idx_agent_id (agent_id),
+        INDEX idx_product_id (product_id),
+        INDEX idx_available_qty (available_quantity),
+        UNIQUE KEY unique_agent_product (agent_id, product_id)
+      )
+    `);
     
     // Add agent_name column to users table if it doesn't exist
     try {
@@ -294,6 +315,8 @@ const adminRoutes = require('./routes/admin');
 const agentRoutes = require('./routes/agents');
 const productRoutes = require('./routes/products');
 const productAssignmentRoutes = require('./routes/productAssignments');
+const inventoryRoutes = require('./routes/inventory');
+const prizeDistributionRoutes = require('./routes/prizeDistribution');
 
 // Swagger configuration
 const swaggerOptions = {
@@ -321,7 +344,7 @@ const swaggerDocs = swaggerJsDoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs, {
   explorer: true,
   customCss: '.swagger-ui .topbar { display: none }',
-  customSiteTitle: "Ilara Spin Wheel API Documentation",
+  customSiteTitle: "Wafcon Spin Wheel API Documentation",
   swaggerOptions: {
     persistAuthorization: true,
     tryItOutEnabled: true,
@@ -362,6 +385,8 @@ app.use('/admin', adminRoutes);
 app.use('/agents', agentRoutes);
 app.use('/products', productRoutes);
 app.use('/product-assignments', productAssignmentRoutes);
+app.use('/inventory', inventoryRoutes);
+app.use('/prize-distribution', prizeDistributionRoutes);
 
 /**
  * @swagger
@@ -387,6 +412,8 @@ app.get('/', (req, res) => {
       '/agents',
       '/products',
       '/product-assignments',
+      '/inventory',
+      '/prize-distribution',
       '/health'
     ]
   });
