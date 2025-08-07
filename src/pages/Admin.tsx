@@ -635,10 +635,10 @@ const Admin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground py-4 md:py-8 px-2 sm:px-4 lg:px-6">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900 dark:to-blue-800 text-foreground py-4 md:py-8 px-2 sm:px-4 lg:px-6">
       <div className="w-full max-w-none mx-auto" style={{ width: '99%' }}>
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 md:mb-8 gap-4">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">Admin Dashboard</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-blue-900 dark:text-white">Admin Dashboard</h1>
           <div className="flex flex-wrap gap-2">
             <ThemeToggle />
             <Button 

@@ -55,69 +55,82 @@ export function UserForm({ onSubmit }: UserFormProps) {
   };
 
   return (
-    <div className="w-full p-4 sm:p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-xl sm:text-2xl font-bold text-center mb-4 sm:mb-6 text-[#1a807a]">Register to Play</h2>
+    <div className="w-full p-6 sm:p-8 bg-gradient-to-br from-white via-blue-50 to-blue-100 rounded-xl shadow-xl border border-blue-200">
+      <div className="text-center mb-6 sm:mb-8">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-2 bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
+          Register to Play
+        </h2>
+        <p className="text-blue-600 text-sm sm:text-base">Fill in your details to spin the wheel</p>
+      </div>
       
-      <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-3 sm:space-y-4">
-        <div className="space-y-1 sm:space-y-2">
-          <Label htmlFor="name" className="text-sm sm:text-base text-[#1a807a]">Full Name</Label>
+      <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-4 sm:space-y-5">
+        <div className="space-y-2">
+          <Label htmlFor="name" className="text-sm sm:text-base font-semibold text-blue-800">Full Name</Label>
           <Input
             id="name"
             {...register("name")}
             placeholder="Enter your full name"
-            className={`text-sm sm:text-base bg-white text-[#1a807a] ${errors.name ? "border-red-500" : ""}`}
+            className={`text-sm sm:text-base bg-white border-2 border-blue-200 focus:border-blue-500 text-blue-800 rounded-lg transition-all duration-200 ${errors.name ? "border-red-500 focus:border-red-500" : ""}`}
           />
           {errors.name && (
-            <p className="text-xs sm:text-sm text-red-500">{errors.name.message}</p>
+            <p className="text-xs sm:text-sm text-red-500 flex items-center gap-1">
+              <span>⚠️</span> {errors.name.message}
+            </p>
           )}
         </div>
 
-        <div className="space-y-1 sm:space-y-2">
-          <Label htmlFor="email" className="text-sm sm:text-base text-[#1a807a]">Email Address</Label>
+        <div className="space-y-2">
+          <Label htmlFor="email" className="text-sm sm:text-base font-semibold text-blue-800">Email Address</Label>
           <Input
             id="email"
             type="email"
             {...register("email")}
             placeholder="Enter your email address"
-            className={`text-sm sm:text-base bg-white text-[#1a807a] ${errors.email ? "border-red-500" : ""}`}
+            className={`text-sm sm:text-base bg-white border-2 border-blue-200 focus:border-blue-500 text-blue-800 rounded-lg transition-all duration-200 ${errors.email ? "border-red-500 focus:border-red-500" : ""}`}
           />
           {errors.email && (
-            <p className="text-xs sm:text-sm text-red-500">{errors.email.message}</p>
+            <p className="text-xs sm:text-sm text-red-500 flex items-center gap-1">
+              <span>⚠️</span> {errors.email.message}
+            </p>
           )}
         </div>
 
-        <div className="space-y-1 sm:space-y-2">
-          <Label htmlFor="location" className="text-sm sm:text-base text-[#1a807a]">Outlet Name</Label>
+        <div className="space-y-2">
+          <Label htmlFor="location" className="text-sm sm:text-base font-semibold text-blue-800">Outlet Name</Label>
           <Input
             id="location"
             {...register("location")}
             placeholder="Enter Outlet Name"
-            className={`text-sm sm:text-base bg-white text-[#1a807a] ${errors.location ? "border-red-500" : ""}`}
+            className={`text-sm sm:text-base bg-white border-2 border-blue-200 focus:border-blue-500 text-blue-800 rounded-lg transition-all duration-200 ${errors.location ? "border-red-500 focus:border-red-500" : ""}`}
           />
           {errors.location && (
-            <p className="text-xs sm:text-sm text-red-500">{errors.location.message}</p>
+            <p className="text-xs sm:text-sm text-red-500 flex items-center gap-1">
+              <span>⚠️</span> {errors.location.message}
+            </p>
           )}
         </div>
 
-        <div className="space-y-1 sm:space-y-2">
-          <Label htmlFor="agentName" className="text-sm sm:text-base text-[#1a807a]">BA's Name</Label>
+        <div className="space-y-2">
+          <Label htmlFor="agentName" className="text-sm sm:text-base font-semibold text-blue-800">BA's Name</Label>
           <Input
             id="agentName"
             {...register("agentName")}
             placeholder="Enter BA's Name"
-            className={`text-sm sm:text-base bg-white text-[#1a807a] ${errors.agentName ? "border-red-500" : ""}`}
+            className={`text-sm sm:text-base bg-white border-2 border-blue-200 focus:border-blue-500 text-blue-800 rounded-lg transition-all duration-200 ${errors.agentName ? "border-red-500 focus:border-red-500" : ""}`}
           />
           {errors.agentName && (
-            <p className="text-xs sm:text-sm text-red-500">{errors.agentName.message}</p>
+            <p className="text-xs sm:text-sm text-red-500 flex items-center gap-1">
+              <span>⚠️</span> {errors.agentName.message}
+            </p>
           )}
         </div>
 
         <Button
           type="submit"
-          className="w-full bg-[#1a807a] hover:bg-[#156b66] text-white text-sm sm:text-base py-2 sm:py-3 mt-2"
+          className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-sm sm:text-base py-3 sm:py-4 mt-6 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-0.5"
           disabled={isSubmitting}
         >
-          Submit & Spin the Wheel
+          {isSubmitting ? "Submitting..." : "Submit & Spin the Wheel 🎰"}
         </Button>
       </form>
     </div>

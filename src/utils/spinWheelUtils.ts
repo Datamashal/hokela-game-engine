@@ -22,7 +22,7 @@ export const wheelSectors: WheelSector[] = [
   {
     color: "#1e40af",
     text: "#ffffff",
-    label: "Win",
+    label: "Ilara Maziwa 500ML",
     isWin: true,
     image: "/lovable-uploads/ce83ca42-1c5a-4b59-aeea-02d67702e949.png",
   },
@@ -35,7 +35,7 @@ export const wheelSectors: WheelSector[] = [
   {
     color: "#1e40af",
     text: "#ffffff",
-    label: "Win",
+    label: "Aprons",
     isWin: true,
     image: "/lovable-uploads/930d77e5-260e-4f17-815a-16b4adfcc090.png",
   },
@@ -48,7 +48,7 @@ export const wheelSectors: WheelSector[] = [
   {
     color: "#1e40af",
     text: "#ffffff",
-    label: "Win",
+    label: "Induction Cooker",
     isWin: true,
     image: "/lovable-uploads/393fafe7-a016-467c-ad93-0753a4608635.png",
   },
@@ -61,7 +61,7 @@ export const wheelSectors: WheelSector[] = [
   {
     color: "#1e40af",
     text: "#ffffff",
-    label: "Win",
+    label: "Kitchen Set",
     isWin: true,
     image: "/lovable-uploads/3c0a59aa-d4a8-4afd-9519-6e34535bbb53.png",
   },
