@@ -130,7 +130,7 @@
 
 /* Add a global style to ensure the entire page has the background color */
 html, body, #root {
-  background-color: rgba(26, 128, 122, 0.85); /* Teal color with 85% opacity */
+  background-color: rgba(30, 100, 180, 0.85); /* Blue color with 85% opacity */
   min-height: 100vh;
   margin: 0;
   padding: 0;

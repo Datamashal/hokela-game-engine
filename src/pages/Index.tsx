@@ -146,14 +146,14 @@ export default function Index() {
   };
 
   return (
-    <div className="min-h-screen bg-[#1a807a]/85 p-4 sm:p-6 md:p-8 flex flex-col items-center justify-center">
+    <div className="min-h-screen bg-[#1e64b4]/85 p-4 sm:p-6 md:p-8 flex flex-col items-center justify-center">
       {!showSpinner ? (
         <div className="w-full max-w-4xl flex flex-col items-center">
-          {/* Twende Morocco logo with responsive size */}
+          {/* Ilara logo with responsive size */}
           <div className="mb-4 sm:mb-6">
             <img 
-              src="/lovable-uploads/105f608b-85eb-4a01-9481-e651fc553969.png" 
-              alt="Twende Morocco Logo" 
+              src="/lovable-uploads/dea1f866-73e1-425a-915f-a3c933e3204c.png" 
+              alt="Ilara Logo" 
               className="w-[120px] sm:w-[150px] h-auto"
             />
           </div>
@@ -174,11 +174,11 @@ export default function Index() {
         </div>
       ) : (
         <div className="w-full max-w-4xl mx-auto flex flex-col items-center justify-center">
-          {/* Twende Morocco logo with responsive size */}
+          {/* Ilara logo with responsive size */}
           <div className="mb-4 sm:mb-6">
             <img 
-              src="/lovable-uploads/10e18fb5-c7a6-4fe2-869e-61a2e63ee5a8.png" 
-              alt="Twende Morocco Logo" 
+              src="/lovable-uploads/dea1f866-73e1-425a-915f-a3c933e3204c.png" 
+              alt="Ilara Logo" 
               className="w-[120px] sm:w-[150px] h-auto"
             />
           </div>
