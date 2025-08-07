@@ -9,6 +9,7 @@ export interface WheelSector {
   image?: string;
 }
 
+
 // Wheel sectors with actual Ilara Mazila products - alternating blue and red colors like reference
 export interface WheelSector {
   color: string;

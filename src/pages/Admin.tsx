@@ -23,6 +23,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 
+
 // API base URL - use environment variable or fallback to the API path
 const API_URL = import.meta.env.VITE_API_URL || "/api";
 
