@@ -1,20 +1,14 @@
-
 {
+  "framework": "vite",
   "buildCommand": "npm run build",
-  "outputDirectory": "dist",
   "devCommand": "npm run dev",
-  "framework": null,
-  "functions": {
-    "app/api/**/*.js": {
-      "runtime": "nodejs18.x"
-    }
-  },
+  "installCommand": "npm install",
+  "outputDirectory": "dist",
   "rewrites": [
     { "source": "/api/spin-results", "destination": "https://ilaraapi.onrender.com/spin-results" },
     { "source": "/api/users", "destination": "https://ilaraapi.onrender.com/users" },
     { "source": "/api/admin/:path*", "destination": "https://ilaraapi.onrender.com/admin/:path*" },
     { "source": "/api/:path*", "destination": "https://ilaraapi.onrender.com/:path*" },
     { "source": "/(.*)", "destination": "/index.html" }
-  ],
-  "installCommand": "npm install"
+  ]
 }
