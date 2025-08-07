@@ -6,13 +6,14 @@ const swaggerJsDoc = require('swagger-jsdoc');
 const mysql = require('mysql2/promise');
 require('dotenv').config();
 
+
 // Initialize Express app
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Enhanced CORS configuration
 app.use(cors({
-  origin: ['https://wafcon-spin-wheel.vercel.app', 'https://wafcon-spin-win-game.vercel.app', process.env.FRONTEND_URL || '*'],
+  origin: ['https://wafcon-spin-wheel.vercel.app', 'https://wafcon-spin-win-game.vercel.app', 'https://ilaraapi.onrender.com', process.env.FRONTEND_URL || '*'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Origin', 'Accept'],
@@ -299,16 +300,17 @@ const swaggerOptions = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Wafcon Spin Wheel API',
+      title: 'Ilara Spin Wheel API',
       version: '1.0.0',
-      description: 'API documentation for Wafcon Spin Wheel Game',
+      description: 'API documentation for Ilara Spin Wheel Game',
     },
+    
     servers: [
-    {
-      url: 'https://wafcon-win-spin-game.onrender.com',
-      description: 'Production API Server',
-    }
-  ],
+      {
+        url: 'https://ilaraapi.onrender.com',
+        description: 'Production API Server',
+      }
+    ],
 },
   apis: ['./server.js', './routes/*.js'],
 };
@@ -326,6 +328,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs, {
     displayRequestDuration: true,
     filter: true,
     deepLinking: true,
+    url: 'https://ilaraapi.onrender.com/api-docs/swagger.json',
     syntaxHighlight: {
       activate: true,
       theme: "agate"
@@ -352,23 +355,6 @@ app.get('/health', (req, res) => {
 // CORS preflight for all routes
 app.options('*', cors());
 
-// API welcome endpoint
-app.get('/', (req, res) => {
-  res.json({ 
-    message: 'Welcome to Wafcon Spin Wheel API', 
-    version: '1.0.0',
-    endpoints: [
-      '/users',
-      '/spin-results',
-      '/admin',
-      '/agents',
-      '/products',
-      '/product-assignments',
-      '/health'
-    ]
-  });
-});
-
 // Routes - Mount without /api prefix
 app.use('/users', userRoutes);
 app.use('/spin-results', spinResultRoutes);
@@ -393,7 +379,16 @@ app.get('/', (req, res) => {
     version: '1.0.0',
     env: process.env.NODE_ENV,
     timestamp: new Date(),
-    documentation: '/api-docs'
+    documentation: '/api-docs',
+    endpoints: [
+      '/users',
+      '/spin-results',
+      '/admin',
+      '/agents',
+      '/products',
+      '/product-assignments',
+      '/health'
+    ]
   });
 });
 
