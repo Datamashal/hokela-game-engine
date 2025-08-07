@@ -321,7 +321,7 @@ const swaggerDocs = swaggerJsDoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs, {
   explorer: true,
   customCss: '.swagger-ui .topbar { display: none }',
-  customSiteTitle: "Wafcon Spin Wheel API Documentation",
+  customSiteTitle: "Ilara Spin Wheel API Documentation",
   swaggerOptions: {
     persistAuthorization: true,
     tryItOutEnabled: true,
