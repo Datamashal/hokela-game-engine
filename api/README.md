@@ -1,5 +1,5 @@
 
-# Faulu Spin Wheel Game - Backend
+# Ilara Spin Wheel Game - Backend
 
 This is the backend API for the Faulu Spin Wheel Game application. It provides endpoints to manage user data and spin results.
 
