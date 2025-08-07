@@ -4,11 +4,6 @@
   "devCommand": "npm run dev",
   "installCommand": "npm install",
   "outputDirectory": "dist",
-  "functions": {
-    "app/api/**/*.js": {
-      "runtime": "@vercel/node"
-    }
-  },
   "rewrites": [
     { "source": "/api/spin-results", "destination": "https://ilaraapi.onrender.com/spin-results" },
     { "source": "/api/users", "destination": "https://ilaraapi.onrender.com/users" },
