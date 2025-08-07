@@ -146,26 +146,10 @@ export default function Index() {
   };
 
   return (
-    <div className="min-h-screen bg-[#1e64b4]/85 p-4 sm:p-6 md:p-8 flex flex-col items-center justify-center">
+    <div className="min-h-screen bg-white p-4 sm:p-6 md:p-8 flex flex-col items-center justify-center">
       {!showSpinner ? (
         <div className="w-full max-w-4xl flex flex-col items-center">
-          {/* Ilara logo with responsive size */}
-          <div className="mb-4 sm:mb-6">
-            <img 
-              src="/lovable-uploads/dea1f866-73e1-425a-915f-a3c933e3204c.png" 
-              alt="Ilara Logo" 
-              className="w-[120px] sm:w-[150px] h-auto"
-            />
-          </div>
-          
-          {/* Animated disclaimer */}
-          <div className="mb-2 sm:mb-3 text-center animate-fade-in">
-            <p className="text-xs sm:text-sm text-white/90 animate-pulse">
-              Everyone should win a merchandise prize
-            </p>
-          </div>
-          
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white/95 mt-4 sm:mt-6 md:mt-8 mb-6 md:mb-8 uppercase text-center px-2">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-black mt-4 sm:mt-6 md:mt-8 mb-6 md:mb-8 uppercase text-center px-2">
             Spin the Wheel and Win
           </h1>
           <div className="w-full max-w-md px-3 sm:px-0">
@@ -174,23 +158,14 @@ export default function Index() {
         </div>
       ) : (
         <div className="w-full max-w-4xl mx-auto flex flex-col items-center justify-center">
-          {/* Ilara logo with responsive size */}
-          <div className="mb-4 sm:mb-6">
-            <img 
-              src="/lovable-uploads/dea1f866-73e1-425a-915f-a3c933e3204c.png" 
-              alt="Ilara Logo" 
-              className="w-[120px] sm:w-[150px] h-auto"
-            />
-          </div>
-          
           {/* Animated disclaimer */}
           <div className="mb-2 sm:mb-3 text-center animate-fade-in">
-            <p className="text-xs sm:text-sm text-white/90 animate-pulse">
+            <p className="text-xs sm:text-sm text-black/70 animate-pulse">
               Everyone should win a merchandise prize
             </p>
           </div>
           
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white/95 mt-4 sm:mt-6 md:mt-8 mb-6 md:mb-8 uppercase text-center px-2">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-black mt-4 sm:mt-6 md:mt-8 mb-6 md:mb-8 uppercase text-center px-2">
             Spin The Wheel
           </h1>
           
@@ -204,7 +179,7 @@ export default function Index() {
 
       {/* Powered By: Hokela Team text at bottom center */}
       <div className="fixed bottom-4 left-0 right-0 text-center">
-        <p className="text-white/95 text-sm font-medium">
+        <p className="text-black text-sm font-medium">
           Powered By: 
           <a href="https://hokela.co.ke/" target="_blank" rel="noopener noreferrer" className="hover:underline cursor-pointer ml-1">
             Hokela Interactive Africa

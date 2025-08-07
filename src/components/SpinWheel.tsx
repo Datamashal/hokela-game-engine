@@ -66,9 +66,9 @@ export function SpinWheel({ onSpinEnd }: SpinWheelProps) {
           aria-label="Spin the wheel"
         />
         
-        {/* Center button */}
+        {/* Center button with logo */}
         <div
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[15%] h-[15%] rounded-full cursor-pointer bg-transparent border-2 border-[#1a807a]" // Updated to teal color
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[15%] h-[15%] rounded-full cursor-pointer bg-white border-2 border-gray-300 flex items-center justify-center shadow-lg"
           onClick={handleSpin}
           onKeyPress={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
@@ -78,7 +78,13 @@ export function SpinWheel({ onSpinEnd }: SpinWheelProps) {
           tabIndex={0}
           role="button"
           aria-label="Spin the wheel center button"
-        />
+        >
+          <img 
+            src="/lovable-uploads/dea1f866-73e1-425a-915f-a3c933e3204c.png" 
+            alt="Ilara Logo" 
+            className="w-[80%] h-[80%] object-contain"
+          />
+        </div>
       </div>
     </div>
   );
