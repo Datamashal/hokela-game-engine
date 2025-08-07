@@ -1,6 +1,7 @@
 /**
  * Utility functions for mapping wheel prizes to product inventory IDs
  */
+
 // Map wheel prize labels to standardized product IDs
 const PRODUCT_MAPPING = {
   // Water bottles
