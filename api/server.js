@@ -26,18 +26,18 @@ app.use(morgan('dev')); // Logging
 
 // Log connection parameters (sensitive information masked in production)
 console.log('Attempting to connect to database with the following parameters:');
-console.log(`Host: ${process.env.DB_HOST}`);
-console.log(`User: ${process.env.DB_USER}`);
-console.log(`Database: ${process.env.DB_NAME}`);
+console.log(`Host: ${process.env.DB_HOST1}`);
+console.log(`User: ${process.env.DB_USER1}`);
+console.log(`Database: ${process.env.DB_NAME1}`);
 console.log(`Connection limit: 10`);
-console.log(`Environment: ${process.env.NODE_ENV}`);
+console.log(`Environment: ${process.env.NODE_ENV1}`);
 
 // MySQL connection pool with improved error handling and SSL disabled
 const pool = mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
+  host: process.env.DB_HOST1,
+  user: process.env.DB_USER1,
+  password: process.env.DB_PASSWORD1,
+  database: process.env.DB_NAME1,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
