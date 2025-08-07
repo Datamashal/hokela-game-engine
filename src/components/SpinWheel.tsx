@@ -41,11 +41,11 @@ export function SpinWheel({ onSpinEnd }: SpinWheelProps) {
     setWheelCanvas(canvas);
   };
 
-  // Determine wheel container size based on device
+  // Determine wheel container size based on device - 3/4 of screen
   // Using string concatenation instead of template literals for older browsers
   const wheelSizeClass = isMobile 
-    ? "w-full max-w-[300px]" 
-    : "w-full max-w-[450px] md:max-w-[400px]";
+    ? "w-[75vw] h-[75vw] max-w-[400px] max-h-[400px]" 
+    : "w-[60vw] h-[60vw] max-w-[600px] max-h-[600px]";
 
   return (
     <div className="flex flex-col items-center w-full">

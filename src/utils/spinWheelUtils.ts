@@ -11,13 +11,13 @@ export interface WheelSector {
 
 // Wheel sectors with actual Ilara Mazila products - alternating blue and red colors like reference
 export const wheelSectors: WheelSector[] = [
-  { color: "#1e40af", text: "#ffffff", label: "MAZILA BOTTLES", isWin: true, image: "/lovable-uploads/8620a2a3-f9f5-4308-a9a8-bd275d85f3bb.png" },
+  { color: "#1e40af", text: "#ffffff", label: "MAZILA BOTTLES", isWin: true, image: "/lovable-uploads/ce83ca42-1c5a-4b59-aeea-02d67702e949.png" },
   { color: "#dc2626", text: "#ffffff", label: "TRY AGAIN", isWin: false },
-  { color: "#1e40af", text: "#ffffff", label: "COOKWARE SET", isWin: true, image: "/lovable-uploads/61c93083-6593-44b-a6df-1049cbc61339.png" },
+  { color: "#1e40af", text: "#ffffff", label: "COOKWARE SET", isWin: true, image: "/lovable-uploads/930d77e5-260e-4f17-815a-16b4adfcc090.png" },
   { color: "#dc2626", text: "#ffffff", label: "TRY AGAIN", isWin: false },
-  { color: "#1e40af", text: "#ffffff", label: "COOKING APRON", isWin: true, image: "/lovable-uploads/f571e24f-5859-4d3b-8f86-73c0d8828516.png" },
+  { color: "#1e40af", text: "#ffffff", label: "COOKING APRON", isWin: true, image: "/lovable-uploads/393fafe7-a016-467c-ad93-0753a4608635.png" },
   { color: "#dc2626", text: "#ffffff", label: "TRY AGAIN", isWin: false },
-  { color: "#1e40af", text: "#ffffff", label: "INDUCTION COOKER", isWin: true, image: "/lovable-uploads/b20b8cb9-412f-480c-9b0c-6b857eb67907.png" },
+  { color: "#1e40af", text: "#ffffff", label: "INDUCTION COOKER", isWin: true, image: "/lovable-uploads/3c0a59aa-d4a8-4afd-9519-6e34535bbb53.png" },
   { color: "#dc2626", text: "#ffffff", label: "TRY AGAIN", isWin: false },
 ];
 

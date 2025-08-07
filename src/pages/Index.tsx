@@ -169,8 +169,8 @@ export default function Index() {
             Spin The Wheel
           </h1>
           
-          <div className="flex justify-center w-full px-4 sm:px-6">
-            <div className="w-full max-w-[280px] sm:max-w-[380px] md:max-w-[400px] lg:max-w-[450px]">
+          <div className="flex justify-center w-full px-2 sm:px-4">
+            <div className="w-full flex justify-center">
               <SpinWheel onSpinEnd={handleSpinEnd} />
             </div>
           </div>

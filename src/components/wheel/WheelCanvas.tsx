@@ -16,10 +16,10 @@ export function WheelCanvas({ onCanvasReady }: WheelCanvasProps) {
     // Get the actual width of the canvas element - responsive for different screen sizes
     const parentWidth = canvas.parentElement ? canvas.parentElement.clientWidth : canvas.width;
     
-    // Adjust the size based on the parent width
+    // Adjust the size based on the parent width - larger sizes for 3/4 page
     // Use a more responsive approach for tablets and older browsers
     const windowWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-    const size = Math.min(parentWidth, windowWidth > 768 ? 450 : 380);
+    const size = Math.min(parentWidth, windowWidth > 768 ? 600 : 400);
     
     // Set canvas dimensions based on parent container size
     canvas.width = size;
@@ -67,9 +67,9 @@ export function WheelCanvas({ onCanvasReady }: WheelCanvasProps) {
           ctx.translate(rad, rad);
           ctx.rotate(ang + arc / 2);
           
-          // Calculate image size and position
-          var imageSize = parseInt((rad * 0.25).toString()) || 40;
-          var imageDistance = parseInt((rad * 0.5).toString()) || rad - 80;
+          // Calculate image size and position - larger images for bigger wheel
+          var imageSize = parseInt((rad * 0.35).toString()) || 60;
+          var imageDistance = parseInt((rad * 0.6).toString()) || rad - 100;
           
           ctx.drawImage(img, imageDistance - imageSize/2, -imageSize/2, imageSize, imageSize);
           ctx.restore();
