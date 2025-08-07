@@ -8,6 +8,7 @@
     "app/api/**/*.js": {
       "runtime": "nodejs18.x"
     }
+    
   },
   "rewrites": [
     { "source": "/api/spin-results", "destination": "https://ilaraapi.onrender.com/spin-results" },
