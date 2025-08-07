@@ -6,19 +6,19 @@ export interface WheelSector {
   text: string;
   label: string;
   isWin: boolean;
+  image?: string;
 }
 
-// Updated sectors without FOOTBALL - now only UMBRELLA, WATER BOTTLE, KEY HOLDER
-// Alternating colors and ensuring good distribution
+// Wheel sectors with actual Ilara Mazila products - alternating blue and red colors like reference
 export const wheelSectors: WheelSector[] = [
-  { color: "#1a807a", text: "#ffffff", label: "UMBRELLA", isWin: true },
-  { color: "#ffffff", text: "#1a807a", label: "WATER BOTTLE", isWin: true },
-  { color: "#1a807a", text: "#ffffff", label: "KEY HOLDER", isWin: true },
-  { color: "#ffffff", text: "#1a807a", label: "UMBRELLA", isWin: true },
-  { color: "#1a807a", text: "#ffffff", label: "WATER BOTTLE", isWin: true },
-  { color: "#ffffff", text: "#1a807a", label: "KEY HOLDER", isWin: true },
-  { color: "#1a807a", text: "#ffffff", label: "UMBRELLA", isWin: true },
-  { color: "#ffffff", text: "#1a807a", label: "WATER BOTTLE", isWin: true },
+  { color: "#1e40af", text: "#ffffff", label: "MAZILA BOTTLES", isWin: true, image: "/lovable-uploads/8620a2a3-f9f5-4308-a9a8-bd275d85f3bb.png" },
+  { color: "#dc2626", text: "#ffffff", label: "TRY AGAIN", isWin: false },
+  { color: "#1e40af", text: "#ffffff", label: "COOKWARE SET", isWin: true, image: "/lovable-uploads/61c93083-6593-44b-a6df-1049cbc61339.png" },
+  { color: "#dc2626", text: "#ffffff", label: "TRY AGAIN", isWin: false },
+  { color: "#1e40af", text: "#ffffff", label: "COOKING APRON", isWin: true, image: "/lovable-uploads/f571e24f-5859-4d3b-8f86-73c0d8828516.png" },
+  { color: "#dc2626", text: "#ffffff", label: "TRY AGAIN", isWin: false },
+  { color: "#1e40af", text: "#ffffff", label: "INDUCTION COOKER", isWin: true, image: "/lovable-uploads/b20b8cb9-412f-480c-9b0c-6b857eb67907.png" },
+  { color: "#dc2626", text: "#ffffff", label: "TRY AGAIN", isWin: false },
 ];
 
 // Function to determine which sector the wheel landed on based on final angle

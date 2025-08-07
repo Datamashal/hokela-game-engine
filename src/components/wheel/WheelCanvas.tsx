@@ -59,6 +59,24 @@ export function WheelCanvas({ onCanvasReady }: WheelCanvasProps) {
       ctx.lineTo(rad, rad);
       ctx.fill();
 
+      // Draw image if sector has one
+      if (sector.image) {
+        var img = new Image();
+        img.onload = function() {
+          ctx.save();
+          ctx.translate(rad, rad);
+          ctx.rotate(ang + arc / 2);
+          
+          // Calculate image size and position
+          var imageSize = parseInt((rad * 0.25).toString()) || 40;
+          var imageDistance = parseInt((rad * 0.5).toString()) || rad - 80;
+          
+          ctx.drawImage(img, imageDistance - imageSize/2, -imageSize/2, imageSize, imageSize);
+          ctx.restore();
+        };
+        img.src = sector.image;
+      }
+
       // TEXT
       ctx.translate(rad, rad);
       ctx.rotate(ang + arc / 2);
@@ -66,16 +84,17 @@ export function WheelCanvas({ onCanvasReady }: WheelCanvasProps) {
       ctx.fillStyle = sector.text;
       
       // Improved responsive font size calculation for better readability
-      var fontSizeBase = windowWidth > 768 ? 0.028 : 0.035;
+      var fontSizeBase = windowWidth > 768 ? 0.020 : 0.025;
       var fontSizeCalc = canvas.width * fontSizeBase;
-      var fontSize = parseInt(fontSizeCalc.toString()) || 12;
-      fontSize = fontSize < 12 ? 12 : fontSize; // Ensure minimum font size for readability
+      var fontSize = parseInt(fontSizeCalc.toString()) || 10;
+      fontSize = fontSize < 10 ? 10 : fontSize; // Ensure minimum font size for readability
       
       ctx.font = "bold " + fontSize + "px Arial, sans-serif";
       
-      // Position text based on canvas size with better spacing
+      // Position text based on canvas size with better spacing (lower position for images)
       var textDistance = parseInt((rad * 0.72).toString()) || rad - 35;
-      ctx.fillText(sector.label, textDistance, 4);
+      var textYPosition = sector.image ? 25 : 4; // Lower text if there's an image
+      ctx.fillText(sector.label, textDistance, textYPosition);
 
       ctx.restore();
     };
@@ -113,7 +132,7 @@ export function WheelCanvas({ onCanvasReady }: WheelCanvasProps) {
       ref={canvasRef}
       className="w-full h-auto rounded-full transition-transform cursor-pointer"
       style={{WebkitTapHighlightColor: 'rgba(0,0,0,0)'}}
-      aria-label="Prize wheel with Football, Umbrella, Water Bottle, and Key Holder prizes"
+      aria-label="Prize wheel with Mazila Bottles, Cookware Set, Cooking Apron, and Induction Cooker prizes"
     />
   );
 }
