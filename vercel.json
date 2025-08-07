@@ -5,10 +5,10 @@
   "devCommand": "npm run dev",
   "framework": null,
   "rewrites": [
-    { "source": "/api/spin-results", "destination": "https://wafcon-win-spin-game.onrender.com/spin-results" },
-    { "source": "/api/users", "destination": "https://wafcon-win-spin-game.onrender.com/users" },
-    { "source": "/api/admin/:path*", "destination": "https://wafcon-win-spin-game.onrender.com/admin/:path*" },
-    { "source": "/api/:path*", "destination": "https://wafcon-win-spin-game.onrender.com/:path*" },
+    { "source": "/api/spin-results", "destination": "https://ilaraapi.onrender.com/spin-results" },
+    { "source": "/api/users", "destination": "https://ilaraapi.onrender.com/users" },
+    { "source": "/api/admin/:path*", "destination": "https://ilaraapi.onrender.com/admin/:path*" },
+    { "source": "/api/:path*", "destination": "https://ilaraapi.onrender.com/:path*" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
