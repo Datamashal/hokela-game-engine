@@ -6,9 +6,8 @@
   "outputDirectory": "dist",
   "functions": {
     "app/api/**/*.js": {
-      "runtime": "nodejs18.x"
+      "runtime": "@vercel/node"
     }
-    
   },
   "rewrites": [
     { "source": "/api/spin-results", "destination": "https://ilaraapi.onrender.com/spin-results" },
