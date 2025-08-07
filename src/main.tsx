@@ -5,6 +5,6 @@ import './index.css'
 
 
 // Set the document title
-document.title = "Wafcon Win Spin Game";
+document.title = "ilara";
 
 createRoot(document.getElementById("root")!).render(<App />);
