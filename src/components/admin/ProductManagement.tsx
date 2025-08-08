@@ -12,8 +12,8 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Label } from "@/components/ui/label";
 import { Plus, Edit, Trash2 } from "lucide-react";
-
 const API_URL = import.meta.env.VITE_API_URL || "/api";
+
 
 interface Product {
   id: number;
@@ -21,6 +21,9 @@ interface Product {
   description: string;
   created_at: string;
   updated_at: string;
+  total_quantity?: number;
+  available_quantity?: number;
+  distributed_quantity?: number;
 }
 
 interface ProductAssignment {
@@ -54,7 +57,7 @@ export function ProductManagement() {
   const [assignmentDialogOpen, setAssignmentDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [editingAssignment, setEditingAssignment] = useState<ProductAssignment | null>(null);
-  const [productForm, setProductForm] = useState({ name: '', description: '' });
+  const [productForm, setProductForm] = useState({ name: '', description: '', quantity: '' });
   const [assignmentForm, setAssignmentForm] = useState({ agent_id: '', product_id: '', quantity: '' });
 
   const queryClient = useQueryClient();
@@ -75,13 +78,13 @@ export function ProductManagement() {
   });
 
   const createProductMutation = useMutation({
-    mutationFn: (data: { name: string; description: string }) =>
+    mutationFn: (data: { name: string; description: string; quantity?: number }) =>
       axios.post(`${API_URL}/products`, data),
     onSuccess: () => {
       toast.success("Product created successfully");
       queryClient.invalidateQueries({ queryKey: ['products'] });
       setProductDialogOpen(false);
-      setProductForm({ name: '', description: '' });
+      setProductForm({ name: '', description: '', quantity: '' });
     },
     onError: () => toast.error("Failed to create product")
   });
@@ -147,9 +150,16 @@ export function ProductManagement() {
     }
     
     if (editingProduct) {
-      updateProductMutation.mutate({ id: editingProduct.id, ...productForm });
+      updateProductMutation.mutate({ id: editingProduct.id, name: productForm.name, description: productForm.description });
     } else {
-      createProductMutation.mutate(productForm);
+      const payload: { name: string; description: string; quantity?: number } = {
+        name: productForm.name,
+        description: productForm.description,
+      };
+      if (productForm.quantity && !isNaN(parseInt(productForm.quantity))) {
+        payload.quantity = Math.max(0, parseInt(productForm.quantity));
+      }
+      createProductMutation.mutate(payload);
     }
   };
 
@@ -181,10 +191,10 @@ export function ProductManagement() {
   const openProductDialog = (product?: Product) => {
     if (product) {
       setEditingProduct(product);
-      setProductForm({ name: product.name, description: product.description });
+      setProductForm({ name: product.name, description: product.description, quantity: '' });
     } else {
       setEditingProduct(null);
-      setProductForm({ name: '', description: '' });
+      setProductForm({ name: '', description: '', quantity: '' });
     }
     setProductDialogOpen(true);
   };
@@ -223,6 +233,7 @@ export function ProductManagement() {
               <TableRow>
                 <TableHead className="text-black font-semibold">Name</TableHead>
                 <TableHead className="text-black font-semibold">Description</TableHead>
+                <TableHead className="text-black font-semibold">Total Won / Initial Quantity</TableHead>
                 <TableHead className="text-black font-semibold">Created At</TableHead>
                 <TableHead className="text-right text-black font-semibold">Actions</TableHead>
               </TableRow>
@@ -232,6 +243,7 @@ export function ProductManagement() {
                 <TableRow key={product.id}>
                   <TableCell className="font-medium text-black">{product.name}</TableCell>
                   <TableCell className="text-black">{product.description}</TableCell>
+                  <TableCell className="text-black">{`${(product.total_quantity ?? 0) - (product.available_quantity ?? 0)} / ${product.total_quantity ?? 0}`}</TableCell>
                   <TableCell className="text-black">{new Date(product.created_at).toLocaleDateString()}</TableCell>
                   <TableCell className="text-right space-x-2">
                     <Button
@@ -372,6 +384,20 @@ export function ProductManagement() {
                 required
               />
             </div>
+            {!editingProduct && (
+              <div>
+                <Label htmlFor="quantity" className="text-black font-medium">Number of prizes to be won (optional)</Label>
+                <Input
+                  id="quantity"
+                  type="number"
+                  min={0}
+                  value={productForm.quantity}
+                  onChange={(e) => setProductForm({ ...productForm, quantity: e.target.value })}
+                  placeholder="Enter initial stock without assigning an agent"
+                  className="text-black bg-white border-gray-300 placeholder:text-gray-500"
+                />
+              </div>
+            )}
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setProductDialogOpen(false)} className="text-black bg-white border-gray-300 hover:bg-gray-50 hover:text-black">

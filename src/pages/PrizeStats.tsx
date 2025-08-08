@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { AgentPrizeStats } from "@/components/admin/AgentPrizeStats";
 import { ThemeToggle } from "@/components/ThemeToggle";
-
 const PrizeStats = () => {
   const navigate = useNavigate();
 

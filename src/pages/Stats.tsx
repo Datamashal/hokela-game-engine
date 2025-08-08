@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { AgentManagement } from "@/components/admin/AgentManagement";
 
+
 // API base URL - use environment variable or fallback to the API path
 const API_URL = import.meta.env.VITE_API_URL || "/api";
 

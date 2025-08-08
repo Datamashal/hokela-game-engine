@@ -17,12 +17,10 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { StatsDisplay } from "@/components/admin/StatsDisplay";
 import { AgentManagement } from "@/components/admin/AgentManagement";
-import { ProductManagement } from "@/components/admin/ProductManagement";
-import { AgentPrizeStats } from "@/components/admin/AgentPrizeStats";
+import { ProductPrizeManagement } from "@/components/admin/ProductPrizeManagement";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-
 
 // API base URL - use environment variable or fallback to the API path
 const API_URL = import.meta.env.VITE_API_URL || "/api";
@@ -263,19 +261,16 @@ const Admin = () => {
       case "agents":
         return <AgentManagement />;
       case "products":
-        return <ProductManagement />;
+        return <ProductPrizeManagement />;
       default:
         return (
-          <div className="space-y-4 md:space-y-6">
-            {/* Prize Distribution Summary */}
-            <AgentPrizeStats />
-
+          <div className="space-y-4 md:space-y-6 bg-admin-bg min-h-screen p-4 rounded-lg">
             {/* Stats Toggle Button */}
             <div className="mb-4 md:mb-6">
               <Button 
                 onClick={toggleStats}
                 variant={showStats ? "secondary" : "default"}
-                className="flex items-center gap-2 text-sm md:text-base"
+                className="flex items-center gap-2 text-sm md:text-base bg-admin-primary hover:bg-admin-primary/90 text-white"
                 size="sm"
               >
                 {showStats ? <BarChart3 className="h-4 w-4" /> : <PieChart className="h-4 w-4" />}
@@ -290,11 +285,11 @@ const Admin = () => {
 
             {/* Statistics Display */}
             {showStats && (
-              <Card className="mb-4 md:mb-6 shadow-lg border-t-4 border-t-primary">
-                <CardHeader className="bg-muted/50 p-4 md:p-6">
-                  <CardTitle className="flex items-center justify-between text-gray-900 dark:text-white text-lg md:text-xl">
+              <Card className="mb-4 md:mb-6 shadow-lg border-t-4 border-t-admin-primary bg-admin-card">
+                <CardHeader className="bg-admin-secondary/20 p-4 md:p-6">
+                  <CardTitle className="flex items-center justify-between text-admin-text text-lg md:text-xl">
                     <div className="flex items-center gap-2">
-                      <PieChart className="h-4 w-4 md:h-5 md:w-5 text-primary" />
+                      <PieChart className="h-4 w-4 md:h-5 md:w-5 text-admin-primary" />
                       <span className="hidden sm:inline">Spin Wheel Statistics</span>
                       <span className="sm:hidden">Statistics</span>
                     </div>
@@ -302,12 +297,12 @@ const Admin = () => {
                       variant="ghost" 
                       size="sm"
                       onClick={handleRetryStatsLoad}
-                      className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                      className="text-admin-text/60 hover:text-admin-text"
                     >
                       <RefreshCw className="h-4 w-4" />
                     </Button>
                   </CardTitle>
-                  <CardDescription className="text-gray-600 dark:text-gray-400 text-sm">
+                  <CardDescription className="text-admin-text/60 text-sm">
                     <span className="hidden sm:inline">Overview of spin wheel results and prize distribution</span>
                     <span className="sm:hidden">Results overview</span>
                   </CardDescription>
@@ -324,10 +319,10 @@ const Admin = () => {
             )}
 
             {/* Date Filter Section */}
-            <Card className="mb-4 md:mb-6 shadow-lg border-l-4 border-l-blue-500">
-              <CardHeader className="bg-muted/50 border-b p-4 md:p-6">
-                <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white text-lg md:text-xl">
-                  <Calendar className="h-4 w-4 md:h-5 md:w-5 text-blue-500" />
+            <Card className="mb-4 md:mb-6 shadow-lg border-l-4 border-l-admin-primary bg-admin-card">
+              <CardHeader className="bg-admin-secondary/20 border-b border-admin-border p-4 md:p-6">
+                <CardTitle className="flex items-center gap-2 text-admin-text text-lg md:text-xl">
+                  <Calendar className="h-4 w-4 md:h-5 md:w-5 text-admin-primary" />
                   Date Filter
                 </CardTitle>
               </CardHeader>
@@ -335,21 +330,21 @@ const Admin = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
                   {/* Date From */}
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-900 dark:text-white">From Date</label>
+                    <label className="text-sm font-medium text-admin-text">From Date</label>
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button
                           variant="outline"
                           className={cn(
-                            "w-full justify-start text-left font-normal",
-                            !dateFrom && "text-gray-600 dark:text-gray-400"
+                            "w-full justify-start text-left font-normal border-admin-border text-admin-text",
+                            !dateFrom && "text-admin-text/60"
                           )}
                         >
                           <Calendar className="mr-2 h-4 w-4" />
                           {dateFrom ? format(dateFrom, "PPP") : "Pick a date"}
                         </Button>
                       </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
+                      <PopoverContent className="w-auto p-0 bg-admin-card border-admin-border" align="start">
                         <CalendarComponent
                           mode="single"
                           selected={dateFrom}
@@ -363,21 +358,21 @@ const Admin = () => {
 
                   {/* Date To */}
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-900 dark:text-white">To Date</label>
+                    <label className="text-sm font-medium text-admin-text">To Date</label>
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button
                           variant="outline"
                           className={cn(
-                            "w-full justify-start text-left font-normal",
-                            !dateTo && "text-gray-600 dark:text-gray-400"
+                            "w-full justify-start text-left font-normal border-admin-border text-admin-text",
+                            !dateTo && "text-admin-text/60"
                           )}
                         >
                           <Calendar className="mr-2 h-4 w-4" />
                           {dateTo ? format(dateTo, "PPP") : "Pick a date"}
                         </Button>
                       </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
+                      <PopoverContent className="w-auto p-0 bg-admin-card border-admin-border" align="start">
                         <CalendarComponent
                           mode="single"
                           selected={dateTo}
@@ -391,12 +386,12 @@ const Admin = () => {
 
                   {/* Reset Button */}
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-900 dark:text-white invisible">Reset</label>
+                    <label className="text-sm font-medium text-admin-text invisible">Reset</label>
                     <Button 
                       variant="outline" 
                       onClick={handleResetFilters}
                       size="default"
-                      className="w-full"
+                      className="w-full border-admin-border text-admin-text hover:bg-admin-secondary/20"
                     >
                       Reset Filters
                     </Button>
@@ -406,9 +401,9 @@ const Admin = () => {
             </Card>
             
             {/* Results Table */}
-            <Card className="mb-4 md:mb-6 shadow-lg border-l-4 border-l-green-500">
-              <CardHeader className="bg-muted/50 border-b p-4 md:p-6">
-                <CardTitle className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 text-gray-900 dark:text-white">
+            <Card className="mb-4 md:mb-6 shadow-lg border-l-4 border-l-green-500 bg-admin-card">
+              <CardHeader className="bg-admin-secondary/20 border-b border-admin-border p-4 md:p-6">
+                <CardTitle className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 text-admin-text">
                   <div className="flex items-center gap-2">
                     <BarChart3 className="h-4 w-4 md:h-5 md:w-5 text-green-600" />
                     <span className="text-sm md:text-base">
@@ -420,7 +415,7 @@ const Admin = () => {
                       variant="outline" 
                       size="sm"
                       onClick={handleRetryResultsLoad}
-                      className="text-blue-600 border-blue-300 hover:bg-blue-50 dark:text-blue-400 dark:border-blue-700 dark:hover:bg-blue-950 text-xs"
+                      className="text-admin-primary border-admin-border hover:bg-admin-secondary/20 text-xs"
                     >
                       <RefreshCw className="mr-1 h-3 w-3 md:h-4 md:w-4" /> 
                       <span className="hidden sm:inline">Refresh</span>
@@ -448,283 +443,246 @@ const Admin = () => {
                           <span className="sm:hidden">Del All</span>
                         </Button>
                       </AlertDialogTrigger>
-                      <AlertDialogContent>
+                      <AlertDialogContent className="bg-admin-card border-admin-border">
                         <AlertDialogHeader>
-                          <AlertDialogTitle className="flex items-center gap-2">
-                            <AlertTriangle className="h-5 w-5 text-red-500" />
-                            Delete All Results
-                          </AlertDialogTitle>
-                          <AlertDialogDescription>
-                            This action will permanently delete all {spinResults.length} spin results. This action cannot be undone.
+                          <AlertDialogTitle className="text-admin-text">Are you absolutely sure?</AlertDialogTitle>
+                          <AlertDialogDescription className="text-admin-text/80">
+                            This action cannot be undone. This will permanently delete all spin results from the database.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogCancel className="border-admin-border text-admin-text">Cancel</AlertDialogCancel>
                           <AlertDialogAction 
                             onClick={handleDeleteAll}
-                            disabled={deleteAllMutation.isPending}
-                            className="bg-red-500 hover:bg-red-600 text-white"
+                            className="bg-red-600 hover:bg-red-700 text-white"
                           >
-                            {deleteAllMutation.isPending ? "Deleting..." : "Delete All"}
+                            Delete All
                           </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>
                   </div>
                 </CardTitle>
-                <CardDescription className="text-gray-600 dark:text-gray-400 text-sm">
-                  <span className="hidden sm:inline">List of all spin wheel results with management options</span>
-                  <span className="sm:hidden">All spin results</span>
-                </CardDescription>
               </CardHeader>
               <CardContent className="p-0">
-                {resultsLoading ? (
-                  <div className="text-center py-8 md:py-12 text-gray-600 dark:text-gray-400">
-                    <div className="animate-spin w-8 h-8 md:w-10 md:h-10 border-3 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
-                    <p className="text-base md:text-lg">Loading results...</p>
-                  </div>
-                ) : resultsError ? (
-                  <div className="text-center py-8 md:py-12 bg-destructive/10">
-                    <div className="text-destructive mb-4 font-medium text-base md:text-lg">
-                      Error loading results. Please try again later.
-                    </div>
-                    <Button onClick={handleRetryResultsLoad} variant="outline" size="sm" className="border-destructive/30 text-destructive hover:bg-destructive/10">
-                      <RefreshCw className="mr-2 h-4 w-4" /> Retry Loading
-                    </Button>
-                  </div>
-                ) : (
-                  <>
-                    <div className="overflow-x-auto">
-                      <Table>
-                        <TableHeader className="bg-muted/50">
-                          <TableRow>
-                            <TableHead className="text-gray-900 dark:text-white font-semibold text-xs md:text-sm whitespace-nowrap">ID</TableHead>
-                            <TableHead className="text-gray-900 dark:text-white font-semibold text-xs md:text-sm">Name</TableHead>
-                            <TableHead className="text-gray-900 dark:text-white font-semibold text-xs md:text-sm hidden sm:table-cell">Email</TableHead>
-                            <TableHead className="text-gray-900 dark:text-white font-semibold text-xs md:text-sm">Location</TableHead>
-                            <TableHead className="text-gray-900 dark:text-white font-semibold text-xs md:text-sm hidden md:table-cell">Agent</TableHead>
-                            <TableHead className="text-gray-900 dark:text-white font-semibold text-xs md:text-sm">Prize</TableHead>
-                            <TableHead className="text-gray-900 dark:text-white font-semibold text-xs md:text-sm">Result</TableHead>
-                            <TableHead className="text-gray-900 dark:text-white font-semibold text-xs md:text-sm hidden lg:table-cell">Date</TableHead>
-                            <TableHead className="text-gray-900 dark:text-white font-semibold text-xs md:text-sm text-right">Actions</TableHead>
+                <div className="relative overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-admin-secondary/10">
+                        <TableHead className="text-admin-text font-semibold">Name</TableHead>
+                        <TableHead className="text-admin-text font-semibold">Email</TableHead>
+                        <TableHead className="text-admin-text font-semibold">Location</TableHead>
+                        <TableHead className="text-admin-text font-semibold">Agent</TableHead>
+                        <TableHead className="text-admin-text font-semibold">Prize</TableHead>
+                        <TableHead className="text-admin-text font-semibold">Result</TableHead>
+                        <TableHead className="text-admin-text font-semibold">Date</TableHead>
+                        <TableHead className="text-right text-admin-text font-semibold">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {resultsLoading ? (
+                        <TableRow>
+                          <TableCell colSpan={8} className="text-center py-8 text-admin-text">
+                            Loading results...
+                          </TableCell>
+                        </TableRow>
+                      ) : resultsError ? (
+                        <TableRow>
+                          <TableCell colSpan={8} className="text-center py-8">
+                            <div className="flex flex-col items-center gap-2">
+                              <AlertTriangle className="h-8 w-8 text-red-500" />
+                              <p className="text-red-500">Error loading results</p>
+                              <Button 
+                                onClick={handleRetryResultsLoad} 
+                                size="sm"
+                                className="bg-admin-primary hover:bg-admin-primary/90 text-white"
+                              >
+                                Retry
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ) : paginatedResults.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={8} className="text-center py-8 text-admin-text">
+                            No results found
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        paginatedResults.map((result: any) => (
+                          <TableRow key={result.id} className="border-admin-border">
+                            <TableCell className="font-medium text-admin-text">{result.name}</TableCell>
+                            <TableCell className="text-admin-text">{result.email}</TableCell>
+                            <TableCell className="text-admin-text">{result.location}</TableCell>
+                            <TableCell className="text-admin-text">{result.agent_name || 'N/A'}</TableCell>
+                            <TableCell className="text-admin-text">{result.prize}</TableCell>
+                            <TableCell>
+                              <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                result.is_win 
+                                  ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
+                                  : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200'
+                              }`}>
+                                {result.is_win ? 'WIN' : 'TRY AGAIN'}
+                              </span>
+                            </TableCell>
+                            <TableCell className="text-admin-text">
+                              {new Date(result.date).toLocaleDateString()}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleDeleteConfirm(result.id)}
+                                className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </TableCell>
                           </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {paginatedResults.length === 0 ? (
-                            <TableRow>
-                              <TableCell colSpan={9} className="text-center text-gray-600 dark:text-gray-400 py-6 md:py-8 text-sm">
-                                {filteredResults.length === 0 && spinResults.length > 0 
-                                  ? "No results match your date filter" 
-                                  : "No spin results found"}
-                              </TableCell>
-                            </TableRow>
-                          ) : (
-                            paginatedResults.map((result: any) => (
-                              <TableRow key={result.id} className="hover:bg-muted/50">
-                                <TableCell className="text-gray-900 dark:text-gray-200 font-medium text-xs md:text-sm">{result.id}</TableCell>
-                                <TableCell className="text-gray-900 dark:text-gray-200 text-xs md:text-sm">{result.name}</TableCell>
-                                <TableCell className="text-gray-900 dark:text-gray-200 text-xs md:text-sm hidden sm:table-cell">{result.email}</TableCell>
-                                <TableCell className="text-gray-900 dark:text-gray-200 text-xs md:text-sm">{result.location}</TableCell>
-                                <TableCell className="text-gray-900 dark:text-gray-200 text-xs md:text-sm hidden md:table-cell">{result.agent_name || 'N/A'}</TableCell>
-                                <TableCell className="text-gray-900 dark:text-gray-200 text-xs md:text-sm">{result.prize}</TableCell>
-                                <TableCell>
-                                  <span 
-                                    className={`px-2 py-1 rounded text-white text-xs font-medium ${
-                                      result.is_win ? "bg-green-500" : "bg-red-500"
-                                    }`}
-                                  >
-                                    {result.is_win ? "Win" : "Loss"}
-                                  </span>
-                                </TableCell>
-                                <TableCell className="text-gray-900 dark:text-gray-200 text-xs hidden lg:table-cell">
-                                  {new Date(result.date).toLocaleString()}
-                                </TableCell>
-                                <TableCell className="text-right">
-                                  <Button 
-                                    variant="ghost" 
-                                    size="sm" 
-                                    onClick={() => handleDeleteConfirm(result.id)}
-                                    className="text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
-                                  >
-                                    <Trash2 className="h-3 w-3 md:h-4 md:w-4" />
-                                    <span className="sr-only">Delete</span>
-                                  </Button>
-                                </TableCell>
-                              </TableRow>
-                            ))
-                          )}
-                        </TableBody>
-                      </Table>
-                    </div>
-                    
-                    {totalResultsPages > 1 && (
-                      <div className="flex justify-center p-4 md:p-6 border-t">
-                        <Pagination>
-                          <PaginationContent>
-                            <PaginationItem>
-                              <PaginationPrevious 
-                                onClick={() => handleResultsPageChange(Math.max(1, resultsPage - 1))}
-                                className={`${resultsPage === 1 ? "pointer-events-none opacity-50" : ""} text-gray-700 hover:bg-gray-100 text-xs md:text-sm`}
-                              />
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+
+                {/* Pagination */}
+                {totalResultsPages > 1 && (
+                  <div className="p-4 border-t border-admin-border">
+                    <Pagination>
+                      <PaginationContent>
+                        <PaginationItem>
+                          <PaginationPrevious 
+                            onClick={() => handleResultsPageChange(Math.max(1, resultsPage - 1))}
+                            className={cn(
+                              resultsPage === 1 && "opacity-50 cursor-not-allowed pointer-events-none",
+                              "text-admin-text hover:bg-admin-secondary/20"
+                            )}
+                          />
+                        </PaginationItem>
+                        {Array.from({ length: Math.min(5, totalResultsPages) }, (_, i) => {
+                          const pageNum = i + 1;
+                          return (
+                            <PaginationItem key={pageNum}>
+                              <PaginationLink
+                                onClick={() => handleResultsPageChange(pageNum)}
+                                isActive={pageNum === resultsPage}
+                                className={cn(
+                                  pageNum === resultsPage 
+                                    ? "bg-admin-primary text-white" 
+                                    : "text-admin-text hover:bg-admin-secondary/20"
+                                )}
+                              >
+                                {pageNum}
+                              </PaginationLink>
                             </PaginationItem>
-                            
-                            {Array.from({ length: Math.min(totalResultsPages, 5) }, (_, i) => {
-                              let page;
-                              if (totalResultsPages <= 5) {
-                                page = i + 1;
-                              } else if (resultsPage <= 3) {
-                                page = i + 1;
-                              } else if (resultsPage >= totalResultsPages - 2) {
-                                page = totalResultsPages - 4 + i;
-                              } else {
-                                page = resultsPage - 2 + i;
-                              }
-                              return (
-                                <PaginationItem key={page}>
-                                  <PaginationLink 
-                                    isActive={page === resultsPage}
-                                    onClick={() => handleResultsPageChange(page)}
-                                    className={`text-gray-900 text-xs md:text-sm ${page === resultsPage ? "bg-primary text-white" : "hover:bg-gray-100"}`}
-                                  >
-                                    {page}
-                                  </PaginationLink>
-                                </PaginationItem>
-                              );
-                            })}
-                            
-                            <PaginationItem>
-                              <PaginationNext 
-                                onClick={() => handleResultsPageChange(Math.min(totalResultsPages, resultsPage + 1))}
-                                className={`${resultsPage === totalResultsPages ? "pointer-events-none opacity-50" : ""} text-gray-700 hover:bg-gray-100 text-xs md:text-sm`}
-                              />
-                            </PaginationItem>
-                          </PaginationContent>
-                        </Pagination>
-                      </div>
-                    )}
-                  </>
+                          );
+                        })}
+                        <PaginationItem>
+                          <PaginationNext 
+                            onClick={() => handleResultsPageChange(Math.min(totalResultsPages, resultsPage + 1))}
+                            className={cn(
+                              resultsPage === totalResultsPages && "opacity-50 cursor-not-allowed pointer-events-none",
+                              "text-admin-text hover:bg-admin-secondary/20"
+                            )}
+                          />
+                        </PaginationItem>
+                      </PaginationContent>
+                    </Pagination>
+                  </div>
                 )}
               </CardContent>
             </Card>
-
-            {/* Confirmation Dialog */}
-            <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle className="text-foreground">Confirm Deletion</DialogTitle>
-                  <DialogDescription className="text-muted-foreground">
-                    Are you sure you want to delete this spin result? This action cannot be undone.
-                  </DialogDescription>
-                </DialogHeader>
-                <DialogFooter>
-                  <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
-                    Cancel
-                  </Button>
-                  <Button 
-                    variant="destructive" 
-                    onClick={handleDelete}
-                    disabled={deleteMutation.isPending}
-                  >
-                    {deleteMutation.isPending ? "Deleting..." : "Delete"}
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
           </div>
         );
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900 dark:to-blue-800 text-foreground py-4 md:py-8 px-2 sm:px-4 lg:px-6">
-      <div className="w-full max-w-none mx-auto" style={{ width: '99%' }}>
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 md:mb-8 gap-4">
-          <h1 className="text-2xl md:text-3xl font-bold text-blue-900 dark:text-white">Admin Dashboard</h1>
-          <div className="flex flex-wrap gap-2">
-            <ThemeToggle />
-            <Button 
-              onClick={() => navigate('/prize-stats')}
-              variant="outline"
-              className="flex items-center gap-2 text-xs md:text-sm"
-              size="sm"
-            >
-              <Award className="h-4 w-4" />
-              <span className="hidden sm:inline">Prize Stats</span>
-              <span className="sm:inline md:hidden">Prizes</span>
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-            <Button 
-              onClick={() => navigate('/stats')}
-              variant="outline"
-              className="flex items-center gap-2 text-xs md:text-sm"
-              size="sm"
-            >
-              <PieChart className="h-4 w-4" />
-              <span className="hidden sm:inline">Statistics</span>
-              <span className="sm:inline md:hidden">Stats</span>
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-            <Button 
-              variant="outline" 
-              onClick={handleLogout}
-              className="flex items-center gap-2 text-red-500 border-red-200 hover:bg-red-50 dark:text-red-400 dark:border-red-700 dark:hover:bg-red-950 text-xs md:text-sm"
-              size="sm"
-            >
-              <LogOut className="h-4 w-4" />
-              <span className="hidden sm:inline">Logout</span>
-            </Button>
+    <div className="min-h-screen bg-admin-bg">
+      {/* Header */}
+      <header className="bg-admin-card shadow-sm border-b border-admin-border">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center">
+              <h1 className="text-xl font-semibold text-admin-text">Admin Panel</h1>
+            </div>
+            <div className="flex items-center space-x-4">
+              <ThemeToggle />
+              <Button
+                onClick={handleLogout}
+                variant="outline"
+                className="flex items-center gap-2 text-red-600 border-red-300 hover:bg-red-50 dark:text-red-400 dark:border-red-700 dark:hover:bg-red-950"
+              >
+                <LogOut className="h-4 w-4" />
+                Logout
+              </Button>
+            </div>
           </div>
         </div>
+      </header>
 
-        {/* Navigation Tabs */}
-        <div className="mb-4 md:mb-6 border-b border-border overflow-x-auto">
-          <nav className="flex space-x-4 md:space-x-8 min-w-max">
-            <button
-              onClick={() => setActiveTab("dashboard")}
-              className={`py-2 px-1 border-b-2 font-medium text-xs md:text-sm whitespace-nowrap ${
-                activeTab === "dashboard"
-                  ? "border-primary text-primary"
-                  : "border-transparent text-gray-900 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:border-gray-300 dark:hover:border-gray-600"
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                <Home className="h-4 w-4" />
-                Dashboard
-              </div>
-            </button>
-            <button
-              onClick={() => setActiveTab("agents")}
-              className={`py-2 px-1 border-b-2 font-medium text-xs md:text-sm whitespace-nowrap ${
-                activeTab === "agents"
-                  ? "border-primary text-primary"
-                  : "border-transparent text-gray-900 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:border-gray-300 dark:hover:border-gray-600"
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                <Package className="h-4 w-4" />
-                <span className="hidden sm:inline">BA Management</span>
-                <span className="sm:hidden">BA</span>
-              </div>
-            </button>
-            <button
-              onClick={() => setActiveTab("products")}
-              className={`py-2 px-1 border-b-2 font-medium text-xs md:text-sm whitespace-nowrap ${
-                activeTab === "products"
-                  ? "border-primary text-primary"
-                  : "border-transparent text-gray-900 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:border-gray-300 dark:hover:border-gray-600"
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                <Package className="h-4 w-4" />
-                <span className="hidden sm:inline">Product Management</span>
-                <span className="sm:hidden">Products</span>
-              </div>
-            </button>
-          </nav>
+      {/* Navigation */}
+      <nav className="bg-admin-card shadow-sm border-b border-admin-border">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex space-x-8">
+            {[
+              { key: "dashboard", label: "Dashboard", icon: Home },
+              { key: "products", label: "Prize Management", icon: Package },
+              { key: "agents", label: "Agents", icon: Award },
+            ].map(({ key, label, icon: Icon }) => (
+              <button
+                key={key}
+                onClick={() => setActiveTab(key)}
+                className={`py-4 px-2 border-b-2 font-medium text-sm transition-colors ${
+                  activeTab === key
+                    ? "border-admin-primary text-admin-primary"
+                    : "border-transparent text-admin-text/60 hover:text-admin-text hover:border-admin-border"
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <Icon className="h-4 w-4" />
+                  <span className="hidden sm:inline">{label}</span>
+                </div>
+              </button>
+            ))}
+          </div>
         </div>
+      </nav>
 
-        {renderTabContent()}
-      </div>
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div className="px-4 py-6 sm:px-0 bg-admin-bg min-h-screen">
+          {renderTabContent()}
+        </div>
+      </main>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent className="bg-admin-card border-admin-border">
+          <DialogHeader>
+            <DialogTitle className="text-admin-text">Delete Spin Result</DialogTitle>
+            <DialogDescription className="text-admin-text/80">
+              Are you sure you want to delete this spin result? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => setDeleteDialogOpen(false)}
+              className="border-admin-border text-admin-text"
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleDelete}
+              disabled={deleteMutation.isPending}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              {deleteMutation.isPending ? "Deleting..." : "Delete"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

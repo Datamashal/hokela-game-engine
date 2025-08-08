@@ -6,11 +6,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 const API_URL = import.meta.env.VITE_API_URL || "/api";
-
 interface PrizeSummary {
-  "KEY HOLDERS": number;
-  "WATER BOTTLES": number;
-  UMBRELLAS: number;
+  "ILARA MAZIWA 500ML": number;
+  "APRONS": number;
+  "INDUCTION COOKER": number;
+  "KITCHEN SET": number;
   total: number;
 }
 
@@ -54,11 +54,12 @@ export function AgentPrizeStats() {
     );
   }
 
-  const prizeData = [
-    { prize: 'KEY HOLDERS', count: prizeSummary?.["KEY HOLDERS"] || 0 },
-    { prize: 'WATER BOTTLES', count: prizeSummary?.["WATER BOTTLES"] || 0 },
-    { prize: 'UMBRELLAS', count: prizeSummary?.UMBRELLAS || 0 },
-  ];
+const prizeData = [
+  { prize: 'Ilara Maziwa 500ML', count: prizeSummary?.["ILARA MAZIWA 500ML"] || 0 },
+  { prize: 'Aprons', count: prizeSummary?.["APRONS"] || 0 },
+  { prize: 'Induction Cooker', count: prizeSummary?.["INDUCTION COOKER"] || 0 },
+  { prize: 'Kitchen Set', count: prizeSummary?.["KITCHEN SET"] || 0 },
+];
 
   return (
     <Card className="w-full">

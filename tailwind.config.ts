@@ -61,6 +61,26 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				steel: {
+					50: 'hsl(var(--steel-50))',
+					100: 'hsl(var(--steel-100))',
+					200: 'hsl(var(--steel-200))',
+					300: 'hsl(var(--steel-300))',
+					400: 'hsl(var(--steel-400))',
+					500: 'hsl(var(--steel-500))',
+					600: 'hsl(var(--steel-600))',
+					700: 'hsl(var(--steel-700))',
+					800: 'hsl(var(--steel-800))',
+					900: 'hsl(var(--steel-900))'
+				},
+				admin: {
+					bg: 'hsl(var(--admin-bg))',
+					card: 'hsl(var(--admin-card))',
+					primary: 'hsl(var(--admin-primary))',
+					secondary: 'hsl(var(--admin-secondary))',
+					border: 'hsl(var(--admin-border))',
+					text: 'hsl(var(--admin-text))',
 				}
 			},
 			borderRadius: {

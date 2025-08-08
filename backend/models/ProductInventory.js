@@ -51,6 +51,7 @@ const mongoose = require('mongoose');
  *         agentName: "John Doe"
  *         location: "Nairobi"
  */
+
 const productInventorySchema = new mongoose.Schema({
   productId: {
     type: String,

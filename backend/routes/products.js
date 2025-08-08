@@ -46,10 +46,28 @@ const router = express.Router();
  */
 router.get('/', async (req, res) => {
   try {
+    // Ensure product_stock table exists so we can join stock info
+    await req.db.query(`
+      CREATE TABLE IF NOT EXISTS product_stock (
+        product_id INT PRIMARY KEY,
+        total_quantity INT NOT NULL DEFAULT 0,
+        available_quantity INT NOT NULL DEFAULT 0,
+        distributed_quantity INT NOT NULL DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      )
+    `);
+
     const [products] = await req.db.query(`
-      SELECT id, name, description, created_at, updated_at 
-      FROM products 
-      ORDER BY created_at DESC
+      SELECT 
+        p.id, p.name, p.description, p.created_at, p.updated_at,
+        IFNULL(SUM(pi.total_quantity), 0) AS total_quantity,
+        IFNULL(SUM(pi.available_quantity), 0) AS available_quantity,
+        IFNULL(SUM(pi.distributed_quantity), 0) AS distributed_quantity
+      FROM products p
+      LEFT JOIN product_inventory pi ON pi.product_id = p.id
+      GROUP BY p.id, p.name, p.description, p.created_at, p.updated_at
+      ORDER BY p.created_at DESC
     `);
     res.json(products);
   } catch (err) {
@@ -83,7 +101,7 @@ router.get('/', async (req, res) => {
  */
 router.post('/', async (req, res) => {
   try {
-    const { name, description } = req.body;
+    const { name, description, quantity } = req.body;
 
     if (!name || !description) {
       return res.status(400).json({ message: 'Name and description are required' });
@@ -98,6 +116,33 @@ router.post('/', async (req, res) => {
       'SELECT * FROM products WHERE id = ?',
       [result.insertId]
     );
+
+    // If initial quantity provided, create/update global stock without assigning to an agent
+    if (quantity !== undefined && quantity !== null && !isNaN(parseInt(quantity))) {
+      const initialQty = Math.max(0, parseInt(quantity));
+
+      // Ensure product_stock table exists
+      await req.db.query(`
+        CREATE TABLE IF NOT EXISTS product_stock (
+          product_id INT PRIMARY KEY,
+          total_quantity INT NOT NULL DEFAULT 0,
+          available_quantity INT NOT NULL DEFAULT 0,
+          distributed_quantity INT NOT NULL DEFAULT 0,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        )
+      `);
+
+      // Upsert stock
+      await req.db.query(
+        `INSERT INTO product_stock (product_id, total_quantity, available_quantity, distributed_quantity)
+         VALUES (?, ?, ?, 0)
+         ON DUPLICATE KEY UPDATE
+           total_quantity = VALUES(total_quantity),
+           available_quantity = VALUES(available_quantity)`,
+        [result.insertId, initialQty, initialQty]
+      );
+    }
 
     res.status(201).json(newProduct[0]);
   } catch (err) {

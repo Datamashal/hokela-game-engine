@@ -266,163 +266,69 @@ router.get('/stats', async (req, res) => {
  *         description: Server error
  */
 router.post('/', async (req, res) => {
-  let connection;
+  const connection = req.db;
+  
   try {
-    console.log('Received spin result data:', req.body);
-    console.log('Request headers:', req.headers);
-    
-    const { name, email, location, agent_name, prize, is_win, agent_id } = req.body;
-    
-    // Enhanced validation with more detailed error messages
-    const missingFields = [];
-    if (!name || name.trim() === '') missingFields.push('name');
-    if (!email || email.trim() === '') missingFields.push('email');
-    if (!location || location.trim() === '') missingFields.push('location');
-    if (!prize || prize.trim() === '') missingFields.push('prize');
-    if (is_win === undefined || is_win === null) missingFields.push('is_win');
-    
-    if (missingFields.length > 0) {
-      console.error(`Missing required fields: ${missingFields.join(', ')}`);
-      return res.status(400).json({ 
-        message: `The following required fields are missing: ${missingFields.join(', ')}`,
-        received: req.body,
-        success: false
-      });
+    await connection.beginTransaction();
+
+    const { agent_id, agent_name, user_name, user_contact, prize_label, is_win, product_id } = req.body;
+    // Validate required fields
+    if (!agent_id || !user_name || !user_contact || prize_label === undefined || is_win === undefined) {
+      await connection.rollback();
+      return res.status(400).json({ message: 'Missing required fields' });
     }
-    
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({ 
-        message: 'Invalid email format',
-        success: false
-      });
-    }
-    
-    // Get connection with timeout
-    console.log('Attempting to get database connection...');
-    connection = await Promise.race([
-      req.db.getConnection(),
-      new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Database connection timeout after 10 seconds')), 10000)
-      )
-    ]);
-    
-    console.log('Database connection acquired successfully');
-    
-    // Test connection
-    await connection.query('SELECT 1');
-    console.log('Database connection test successful');
+    // If it's a win and product_id is provided, check and update inventory atomically
+    if (is_win && product_id) {
+      // First check if there's available quantity
+      const [inventoryCheck] = await connection.query(`
+        SELECT available_quantity 
+        FROM product_inventory 
+        WHERE agent_id = ? AND product_id = ? 
+        FOR UPDATE
+      `, [agent_id, product_id]);
 
-    // If it's a win, check inventory and update stock
-    let finalPrize = prize;
-    let finalIsWin = is_win;
-    
-    if (is_win && agent_id && isProductWin(prize)) {
-      // Use product mapping utility to get standardized product ID
-      const productId = mapPrizeToProductId(prize);
+      if (inventoryCheck.length === 0 || inventoryCheck[0].available_quantity <= 0) {
+        await connection.rollback();
+        return res.status(400).json({ 
+          message: 'No prize available', 
+          error: 'Insufficient inventory' 
+        });
+      }
 
-      console.log(`Checking inventory for product: ${productId} (from prize: ${prize}), agent: ${agent_id}`);
+      // Update inventory with atomic operation
+      const [updateResult] = await connection.query(`
+        UPDATE product_inventory 
+        SET available_quantity = available_quantity - 1,
+            distributed_quantity = distributed_quantity + 1,
+            last_updated = NOW()
+        WHERE agent_id = ? AND product_id = ? AND available_quantity > 0
+      `, [agent_id, product_id]);
 
-      // Check if product is available in inventory
-      const [inventory] = await connection.query(
-        'SELECT * FROM product_inventory WHERE product_id = ? AND agent_id = ? AND available_quantity > 0',
-        [productId, agent_id]
-      );
-
-      if (inventory.length === 0) {
-        console.log(`No inventory found for product ${productId}, agent ${agent_id}. Converting to "Try Again"`);
-        // If no inventory available, convert to "Try Again"
-        finalPrize = 'Try Again';
-        finalIsWin = false;
-      } else {
-        // Update inventory - decrease available quantity
-        await connection.query(
-          `UPDATE product_inventory 
-           SET available_quantity = available_quantity - 1, 
-               distributed_quantity = distributed_quantity + 1,
-               updated_at = CURRENT_TIMESTAMP
-           WHERE product_id = ? AND agent_id = ?`,
-          [productId, agent_id]
-        );
-        
-        console.log(`Inventory updated for product ${productId}. Remaining: ${inventory[0].available_quantity - 1}`);
+      if (updateResult.affectedRows === 0) {
+        await connection.rollback();
+        return res.status(400).json({ 
+          message: 'No prize available', 
+          error: 'Inventory was depleted during transaction' 
+        });
       }
     }
-    
-    // Log before database insertion
-    console.log('Attempting to insert into database with values:', { 
-      name: name.trim(), 
-      email: email.trim(), 
-      location: location.trim(), 
-      agent_name: agent_name ? agent_name.trim() : null, 
-      prize: finalPrize.trim(), 
-      is_win: Boolean(finalIsWin)
-    });
-    
-    // Insert data into database with proper error handling
+    // Insert the spin result
     const [result] = await connection.query(
-      'INSERT INTO spin_results (name, email, location, agent_name, prize, is_win) VALUES (?, ?, ?, ?, ?, ?)',
-      [
-        name.trim(), 
-        email.trim(), 
-        location.trim(), 
-        agent_name ? agent_name.trim() : null, 
-        finalPrize.trim(), 
-        Boolean(finalIsWin)
-      ]
+      `INSERT INTO spin_results (agent_id, agent_name, user_name, user_contact, prize_label, is_win, date) 
+       VALUES (?, ?, ?, ?, ?, ?, NOW())`,
+      [agent_id, agent_name || 'Unknown Agent', user_name, user_contact, prize_label, is_win]
     );
-    
-    console.log('Insert result:', result);
-    
-    if (result.affectedRows && result.insertId) {
-      // Fetch the newly created record
-      const [newResult] = await connection.query('SELECT * FROM spin_results WHERE id = ?', [result.insertId]);
-      console.log('Successfully recorded spin result:', newResult[0]);
-      
-      res.status(201).json({
-        success: true,
-        message: 'Spin result recorded successfully',
-        data: newResult[0]
-      });
-    } else {
-      throw new Error('Failed to record spin result - no rows affected');
-    }
-  } catch (err) {
-    console.error('Error recording spin result:', err);
-    
-    let statusCode = 500;
-    let errorMessage = 'Internal server error';
-    
-    if (err.message.includes('timeout')) {
-      statusCode = 503;
-      errorMessage = 'Database connection timeout - service temporarily unavailable';
-    } else if (err.code === 'ER_DUP_ENTRY') {
-      statusCode = 409;
-      errorMessage = 'Duplicate entry detected';
-    } else if (err.code === 'ER_NO_SUCH_TABLE') {
-      statusCode = 503;
-      errorMessage = 'Database table not found - service configuration error';
-    } else if (err.code === 'ECONNREFUSED') {
-      statusCode = 503;
-      errorMessage = 'Database connection refused - service unavailable';
-    }
-    
-    res.status(statusCode).json({ 
-      success: false,
-      message: errorMessage,
-      error: err.message,
-      code: err.code || 'UNKNOWN_ERROR'
+
+    await connection.commit();
+    res.status(201).json({ 
+      message: 'Spin result recorded successfully', 
+      id: result.insertId 
     });
-  } finally {
-    if (connection) {
-      try {
-        connection.release();
-        console.log('Database connection released');
-      } catch (releaseErr) {
-        console.error('Error releasing connection:', releaseErr);
-      }
-    }
+
+  } catch (err) {
+    await connection.rollback();
+    console.error('Error recording spin result:', err);
+    res.status(500).json({ message: 'Error recording spin result', error: err.message });
   }
 });
 
@@ -545,23 +451,25 @@ router.get('/agent-prize-stats', async (req, res) => {
     // First, get all spin results and normalize the prize names
     const [allResults] = await connection.query('SELECT * FROM spin_results ORDER BY date DESC');
     
-    // Normalize prize names and count accurately - removed FOOTBALLS
+    // Normalize prize names and count accurately for current product set
     const prizeCounts = {
-      "KEY HOLDERS": 0,
-      "WATER BOTTLES": 0,
-      "UMBRELLAS": 0
+      "ILARA MAZIWA 500ML": 0,
+      "APRONS": 0,
+      "INDUCTION COOKER": 0,
+      "KITCHEN SET": 0
     };
     
     allResults.forEach(result => {
-      const prizeUpper = result.prize.toUpperCase().replace(/\s+/g, ' ').trim();
+      const prizeUpper = String(result.prize || '').toUpperCase().replace(/\s+/g, ' ').trim();
       
-      // More comprehensive matching for remaining prizes (removed football matching)
-      if (prizeUpper === 'KEY HOLDERS' || prizeUpper === 'KEYHOLDERS' || prizeUpper === 'KEYHOLDER' || prizeUpper === 'KEY HOLDER') {
-        prizeCounts["KEY HOLDERS"]++;
-      } else if (prizeUpper === 'WATER BOTTLES' || prizeUpper === 'WATER BOTTLE' || prizeUpper === 'WATERBOTTLES' || prizeUpper === 'WATERBOTTLE') {
-        prizeCounts["WATER BOTTLES"]++;
-      } else if (prizeUpper === 'UMBRELLAS' || prizeUpper === 'UMBRELLA') {
-        prizeCounts["UMBRELLAS"]++;
+      if (prizeUpper.includes('MAZIWA') || prizeUpper.includes('500ML')) {
+        prizeCounts["ILARA MAZIWA 500ML"]++;
+      } else if (prizeUpper === 'APRONS' || prizeUpper === 'APRON') {
+        prizeCounts["APRONS"]++;
+      } else if (prizeUpper.includes('INDUCTION') || prizeUpper.includes('COOKER')) {
+        prizeCounts["INDUCTION COOKER"]++;
+      } else if (prizeUpper.includes('KITCHEN') && prizeUpper.includes('SET')) {
+        prizeCounts["KITCHEN SET"]++;
       }
     });
 

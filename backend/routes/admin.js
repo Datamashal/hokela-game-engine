@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-
 /**
  * @swagger
  * /api/admin/users/export:

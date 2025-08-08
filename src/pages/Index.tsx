@@ -8,7 +8,6 @@ import { toast } from "@/components/ui/use-toast";
 
 // Get the proper API URL based on environment variable or fallback to API path
 const API_URL = import.meta.env.VITE_API_URL || "/api";
-
 interface UserData {
   name: string;
   email: string;
@@ -34,47 +33,38 @@ export default function Index() {
   };
 
   const handleSpinEnd = async (prize: Prize) => {
-    setPrizeWon(prize);
-    setShowWinModal(true);
-
     if (userData) {
       try {
         setIsLoading(true);
         console.log(`Sending result to backend: ${API_URL}/spin-results`);
-        
-        // Create timeout for the request
+
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 30000); // Increased timeout to 30 seconds
-        
-        // Prepare the payload with the correct field names expected by the backend
-        const payload = {
+        const timeoutId = setTimeout(() => controller.abort(), 30000);
+
+        const payload: any = {
           name: userData.name,
           email: userData.email,
           location: userData.location,
-          agent_name: userData.agentName, // Added agent_name field for backend
+          agent_name: userData.agentName,
           prize: prize.label,
-          is_win: prize.isWin, // Backend expects is_win not isWin
+          is_win: prize.isWin,
         };
-        
-        console.log("Sending payload:", payload);
-        
-        // Save spin result to the backend API with improved error handling
+
         const response = await fetch(`${API_URL}/spin-results`, {
           method: 'POST',
           signal: controller.signal,
-          mode: 'cors', // Explicitly set CORS mode
-          cache: 'no-cache', // Disable caching
+          mode: 'cors',
+          cache: 'no-cache',
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
           },
           body: JSON.stringify(payload),
         });
-        
+
         clearTimeout(timeoutId);
 
-        // Parse response JSON first
-        let responseData;
+        let responseData: any;
         try {
           responseData = await response.json();
         } catch (parseError) {
@@ -84,8 +74,6 @@ export default function Index() {
 
         if (!response.ok) {
           console.error('Server error response:', responseData);
-          
-          // Handle specific error cases
           if (response.status === 503) {
             throw new Error('Service temporarily unavailable. Please try again in a few moments.');
           } else if (response.status === 400) {
@@ -96,45 +84,36 @@ export default function Index() {
             throw new Error(responseData.message || `Server error: ${response.status}`);
           }
         }
+
+        console.log('Saved spin result:', responseData);
+
+        setPrizeWon(prize);
+        setShowWinModal(true);
         
-        console.log('Successfully saved spin result to backend:', responseData);
-        
-        // Only show success toast if explicitly needed
-        if (responseData.success) {
-          console.log('Spin result saved successfully');
-        }
-        
+        // Update win history if needed
+        // Note: Prize inventory checking is now handled on the backend
       } catch (error: any) {
         console.error('Error saving spin result:', error);
         
-        let errorTitle = "Saving Error";
-        let errorMessage = "Could not save to server. Please try again.";
-        
-        // Handle different types of errors with user-friendly messages
-        if (error.name === 'AbortError') {
-          errorTitle = "Connection Timeout";
-          errorMessage = "The request took too long. Your result may still be saved. Please check your connection.";
-        } else if (error.message.includes('503')) {
-          errorTitle = "Service Unavailable";
-          errorMessage = "The server is temporarily unavailable. Please try again in a few moments.";
-        } else if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
-          errorTitle = "Network Error";
-          errorMessage = "Please check your internet connection and try again.";
-        } else if (error.message.includes('temporarily unavailable')) {
-          errorTitle = "Service Temporarily Down";
-          errorMessage = error.message;
+        // Check if it's a "No prize available" error from backend
+        if (error.message && error.message.includes('No prize available')) {
+          toast({ title: 'TRY AGAIN', description: 'That prize is no longer available. Please spin again!' });
+          setPrizeWon({ label: "TRY AGAIN", isWin: false });
+          setShowWinModal(true);
         } else {
-          errorMessage = error.message || "Unknown error occurred. Please try again.";
+          toast({
+            title: 'Saving Error',
+            description: error.message || 'Could not save to server. Please try again.',
+            variant: 'destructive',
+          });
         }
-        
-        toast({
-          title: errorTitle,
-          description: errorMessage,
-          variant: "destructive",
-        });
       } finally {
         setIsLoading(false);
       }
+    } else {
+      // Fallback if no user data (should not happen)
+      setPrizeWon(prize);
+      setShowWinModal(true);
     }
   };
 

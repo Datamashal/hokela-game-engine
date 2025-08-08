@@ -42,7 +42,6 @@ const Login = () => {
       setIsLoading(false);
     }
   };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary/90 to-primary/60 p-4 sm:p-6 lg:p-8">
       <div className="max-w-md w-full">
