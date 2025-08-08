@@ -69,32 +69,32 @@ export function StatsDisplay({ stats, isLoading, error, onRetry }: StatsDisplayP
   ];
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 bg-blue-50 dark:bg-blue-900 p-4 rounded-lg">
       {/* Summary Cards */}
       <div className="space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 hover:shadow-md transition-shadow">
+          <Card className="bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-800 dark:to-blue-700 border-blue-300 dark:border-blue-600 hover:shadow-md transition-shadow">
             <CardContent className="p-4 text-center">
-              <p className="text-blue-600 text-sm font-medium mb-1">Total Spins</p>
-              <h2 className="text-3xl font-bold text-blue-900">{stats.totalSpins || 0}</h2>
+              <p className="text-blue-700 dark:text-blue-200 text-sm font-medium mb-1">Total Spins</p>
+              <h2 className="text-3xl font-bold text-blue-900 dark:text-blue-100">{stats.totalSpins || 0}</h2>
             </CardContent>
           </Card>
           
-          <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200 hover:shadow-md transition-shadow">
+          <Card className="bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-800 dark:to-blue-700 border-blue-300 dark:border-blue-600 hover:shadow-md transition-shadow">
             <CardContent className="p-4 text-center">
-              <p className="text-green-600 text-sm font-medium mb-1">Total Wins</p>
-              <h2 className="text-3xl font-bold text-green-900">{stats.wins || 0}</h2>
-              <p className="text-green-600 text-xs mt-1">
+              <p className="text-blue-700 dark:text-blue-200 text-sm font-medium mb-1">Total Wins</p>
+              <h2 className="text-3xl font-bold text-blue-900 dark:text-blue-100">{stats.wins || 0}</h2>
+              <p className="text-blue-600 dark:text-blue-300 text-xs mt-1">
                 {stats.totalSpins ? ((stats.wins / stats.totalSpins) * 100).toFixed(1) + '%' : '0%'}
               </p>
             </CardContent>
           </Card>
           
-          <Card className="bg-gradient-to-br from-red-50 to-red-100 border-red-200 hover:shadow-md transition-shadow">
+          <Card className="bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-800 dark:to-blue-700 border-blue-300 dark:border-blue-600 hover:shadow-md transition-shadow">
             <CardContent className="p-4 text-center">
-              <p className="text-red-600 text-sm font-medium mb-1">Total Losses</p>
-              <h2 className="text-3xl font-bold text-red-900">{stats.losses || 0}</h2>
-              <p className="text-red-600 text-xs mt-1">
+              <p className="text-blue-700 dark:text-blue-200 text-sm font-medium mb-1">Total Losses</p>
+              <h2 className="text-3xl font-bold text-blue-900 dark:text-blue-100">{stats.losses || 0}</h2>
+              <p className="text-blue-600 dark:text-blue-300 text-xs mt-1">
                 {stats.totalSpins ? ((stats.losses / stats.totalSpins) * 100).toFixed(1) + '%' : '0%'}
               </p>
             </CardContent>
@@ -102,8 +102,8 @@ export function StatsDisplay({ stats, isLoading, error, onRetry }: StatsDisplayP
         </div>
 
         {/* Win/Loss Donut Chart */}
-        <div className="h-64">
-          <p className="text-gray-700 font-medium text-center mb-2">Win/Loss Distribution</p>
+        <div className="h-64 bg-blue-50 dark:bg-blue-800 rounded-lg p-4">
+          <p className="text-blue-900 dark:text-blue-100 font-medium text-center mb-2">Win/Loss Distribution</p>
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
@@ -129,8 +129,8 @@ export function StatsDisplay({ stats, isLoading, error, onRetry }: StatsDisplayP
       </div>
 
       {/* Prize Distribution Bar Chart */}
-      <div className="h-80">
-        <p className="text-gray-700 font-medium text-center mb-2">Top 5 Prize Distribution</p>
+      <div className="h-80 bg-blue-50 dark:bg-blue-800 rounded-lg p-4">
+        <p className="text-blue-900 dark:text-blue-100 font-medium text-center mb-2">Top 5 Prize Distribution</p>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={prizeData.sort((a, b) => b.value - a.value).slice(0, 5)}
@@ -146,9 +146,9 @@ export function StatsDisplay({ stats, isLoading, error, onRetry }: StatsDisplayP
               angle={-45} 
               textAnchor="end" 
               height={70} 
-              tick={{fontSize: 10}}
+              tick={{fontSize: 10, fill: '#1e40af'}}
             />
-            <YAxis />
+            <YAxis tick={{fill: '#1e40af'}} />
             <Tooltip formatter={(value) => [`${value} times awarded`, 'Count']} />
             <Legend />
             <Bar dataKey="value" name="Count">

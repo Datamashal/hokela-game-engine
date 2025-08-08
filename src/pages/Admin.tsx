@@ -598,20 +598,20 @@ const Admin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-admin-bg">
+    <div className="min-h-screen bg-blue-50 dark:bg-blue-900">
       {/* Header */}
-      <header className="bg-admin-card shadow-sm border-b border-admin-border">
+      <header className="bg-blue-600 dark:bg-blue-800 shadow-sm border-b border-blue-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <h1 className="text-xl font-semibold text-admin-text">Admin Panel</h1>
+              <h1 className="text-xl font-semibold text-white">Admin Panel</h1>
             </div>
             <div className="flex items-center space-x-4">
               <ThemeToggle />
               <Button
                 onClick={handleLogout}
                 variant="outline"
-                className="flex items-center gap-2 text-red-600 border-red-300 hover:bg-red-50 dark:text-red-400 dark:border-red-700 dark:hover:bg-red-950"
+                className="flex items-center gap-2 text-white border-blue-400 hover:bg-blue-500 hover:border-blue-300"
               >
                 <LogOut className="h-4 w-4" />
                 Logout
@@ -622,7 +622,7 @@ const Admin = () => {
       </header>
 
       {/* Navigation */}
-      <nav className="bg-admin-card shadow-sm border-b border-admin-border">
+      <nav className="bg-blue-600 dark:bg-blue-800 shadow-sm border-b border-blue-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex space-x-8">
             {[
@@ -635,8 +635,8 @@ const Admin = () => {
                 onClick={() => setActiveTab(key)}
                 className={`py-4 px-2 border-b-2 font-medium text-sm transition-colors ${
                   activeTab === key
-                    ? "border-admin-primary text-admin-primary"
-                    : "border-transparent text-admin-text/60 hover:text-admin-text hover:border-admin-border"
+                    ? "border-blue-300 text-blue-100"
+                    : "border-transparent text-blue-200 hover:text-blue-100 hover:border-blue-400"
                 }`}
               >
                 <div className="flex items-center gap-2">
@@ -651,7 +651,7 @@ const Admin = () => {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0 bg-admin-bg min-h-screen">
+        <div className="px-4 py-6 sm:px-0 bg-blue-50 dark:bg-blue-900 min-h-screen">
           {renderTabContent()}
         </div>
       </main>

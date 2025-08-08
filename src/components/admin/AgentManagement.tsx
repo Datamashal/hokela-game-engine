@@ -189,54 +189,54 @@ export function AgentManagement() {
   }
 
   return (
-    <div className="space-y-6">
-      <Card className="shadow-lg border-l-4 border-l-blue-500">
-        <CardHeader className="bg-gray-50 border-b">
-          <CardTitle className="flex justify-between items-center text-gray-900">
+    <div className="space-y-6 bg-blue-50 dark:bg-blue-900 p-6 rounded-lg">
+      <Card className="shadow-lg border-l-4 border-l-blue-500 bg-blue-50 dark:bg-blue-800">
+        <CardHeader className="bg-blue-100 dark:bg-blue-700 border-b">
+          <CardTitle className="flex justify-between items-center text-blue-900 dark:text-blue-100">
             <div className="flex items-center gap-2">
               <span>Business Agent Management</span>
-              <span className="text-sm font-normal text-gray-600">({agents.length} agents)</span>
+              <span className="text-sm font-normal text-blue-600 dark:text-blue-300">({agents.length} agents)</span>
             </div>
             <Button 
               onClick={handleCreate}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white"
             >
               <Plus className="h-4 w-4" />
               Add Agent
             </Button>
           </CardTitle>
-          <CardDescription className="text-gray-600">
+          <CardDescription className="text-blue-700 dark:text-blue-300">
             Manage business agents with unique agent IDs and their information
           </CardDescription>
         </CardHeader>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
-              <TableHeader className="bg-gray-50">
+              <TableHeader className="bg-blue-100 dark:bg-blue-700">
                 <TableRow>
-                  <TableHead className="text-gray-900 font-semibold">Agent ID</TableHead>
-                  <TableHead className="text-gray-900 font-semibold">Name</TableHead>
-                  <TableHead className="text-gray-900 font-semibold">Email</TableHead>
-                  <TableHead className="text-gray-900 font-semibold">Location</TableHead>
-                  <TableHead className="text-gray-900 font-semibold">Created</TableHead>
-                  <TableHead className="text-gray-900 font-semibold text-right">Actions</TableHead>
+                  <TableHead className="text-blue-900 dark:text-blue-100 font-semibold">Agent ID</TableHead>
+                  <TableHead className="text-blue-900 dark:text-blue-100 font-semibold">Name</TableHead>
+                  <TableHead className="text-blue-900 dark:text-blue-100 font-semibold">Email</TableHead>
+                  <TableHead className="text-blue-900 dark:text-blue-100 font-semibold">Location</TableHead>
+                  <TableHead className="text-blue-900 dark:text-blue-100 font-semibold">Created</TableHead>
+                  <TableHead className="text-blue-900 dark:text-blue-100 font-semibold text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {agents.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center text-gray-500 py-8">
+                    <TableCell colSpan={6} className="text-center text-blue-600 dark:text-blue-300 py-8">
                       No agents found. Click "Add Agent" to create your first agent.
                     </TableCell>
                   </TableRow>
                 ) : (
                   agents.map((agent) => (
-                    <TableRow key={agent.id} className="hover:bg-gray-50">
-                      <TableCell className="text-gray-900 font-medium">{agent.agent_id}</TableCell>
-                      <TableCell className="text-gray-900">{agent.name}</TableCell>
-                      <TableCell className="text-gray-900">{agent.email}</TableCell>
-                      <TableCell className="text-gray-900">{agent.location}</TableCell>
-                      <TableCell className="text-gray-900 text-sm">
+                    <TableRow key={agent.id} className="hover:bg-blue-50 dark:hover:bg-blue-800/50">
+                      <TableCell className="text-blue-900 dark:text-blue-100 font-medium">{agent.agent_id}</TableCell>
+                      <TableCell className="text-blue-900 dark:text-blue-100">{agent.name}</TableCell>
+                      <TableCell className="text-blue-900 dark:text-blue-100">{agent.email}</TableCell>
+                      <TableCell className="text-blue-900 dark:text-blue-100">{agent.location}</TableCell>
+                      <TableCell className="text-blue-900 dark:text-blue-100 text-sm">
                         {new Date(agent.created_at).toLocaleDateString()}
                       </TableCell>
                       <TableCell className="text-right">
@@ -245,7 +245,7 @@ export function AgentManagement() {
                             variant="ghost" 
                             size="sm" 
                             onClick={() => handleEdit(agent)}
-                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-100 dark:text-blue-400 dark:hover:text-blue-300 dark:hover:bg-blue-800"
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
@@ -270,60 +270,60 @@ export function AgentManagement() {
 
       {/* Create/Edit Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="bg-white">
+        <DialogContent className="bg-blue-50 dark:bg-blue-900 border-blue-200 dark:border-blue-700">
           <DialogHeader>
-            <DialogTitle className="text-gray-900">
+            <DialogTitle className="text-blue-900 dark:text-blue-100">
               {editingAgent ? 'Edit Agent' : 'Create New Agent'}
             </DialogTitle>
-            <DialogDescription className="text-gray-600">
+            <DialogDescription className="text-blue-700 dark:text-blue-300">
               {editingAgent ? 'Update agent information below.' : 'Enter agent information to create a new agent.'}
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="agent_id" className="text-gray-700">Agent ID *</Label>
+                <Label htmlFor="agent_id" className="text-blue-900 dark:text-blue-100">Agent ID *</Label>
                 <Input
                   id="agent_id"
                   value={formData.agent_id}
                   onChange={(e) => handleInputChange('agent_id', e.target.value)}
                   placeholder="Enter unique agent ID"
-                  className="bg-white border-gray-200 focus:border-blue-500"
+                  className="bg-blue-50 dark:bg-blue-800 border-blue-200 dark:border-blue-600 focus:border-blue-500 text-blue-900 dark:text-blue-100"
                   required
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="name" className="text-gray-700">Name *</Label>
+                <Label htmlFor="name" className="text-blue-900 dark:text-blue-100">Name *</Label>
                 <Input
                   id="name"
                   value={formData.name}
                   onChange={(e) => handleInputChange('name', e.target.value)}
                   placeholder="Enter agent name"
-                  className="bg-white border-gray-200 focus:border-blue-500"
+                  className="bg-blue-50 dark:bg-blue-800 border-blue-200 dark:border-blue-600 focus:border-blue-500 text-blue-900 dark:text-blue-100"
                   required
                 />
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-gray-700">Email *</Label>
+              <Label htmlFor="email" className="text-blue-900 dark:text-blue-100">Email *</Label>
               <Input
                 id="email"
                 type="email"
                 value={formData.email}
                 onChange={(e) => handleInputChange('email', e.target.value)}
                 placeholder="Enter agent email"
-                className="bg-white border-gray-200 focus:border-blue-500"
+                className="bg-blue-50 dark:bg-blue-800 border-blue-200 dark:border-blue-600 focus:border-blue-500 text-blue-900 dark:text-blue-100"
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="location" className="text-gray-700">Location *</Label>
+              <Label htmlFor="location" className="text-blue-900 dark:text-blue-100">Location *</Label>
               <Input
                 id="location"
                 value={formData.location}
                 onChange={(e) => handleInputChange('location', e.target.value)}
                 placeholder="Enter agent location"
-                className="bg-white border-gray-200 focus:border-blue-500"
+                className="bg-blue-50 dark:bg-blue-800 border-blue-200 dark:border-blue-600 focus:border-blue-500 text-blue-900 dark:text-blue-100"
                 required
               />
             </div>
@@ -332,13 +332,14 @@ export function AgentManagement() {
                 type="button" 
                 variant="outline" 
                 onClick={() => setIsDialogOpen(false)}
-                className="text-gray-700 border-gray-200 hover:bg-gray-50"
+                className="text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-600 hover:bg-blue-100 dark:hover:bg-blue-800"
               >
                 Cancel
               </Button>
               <Button 
                 type="submit"
                 disabled={createMutation.isPending || updateMutation.isPending}
+                className="bg-blue-600 hover:bg-blue-700 text-white"
               >
                 {createMutation.isPending || updateMutation.isPending 
                   ? (editingAgent ? 'Updating...' : 'Creating...') 
@@ -352,18 +353,18 @@ export function AgentManagement() {
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteAgentId !== null} onOpenChange={() => setDeleteAgentId(null)}>
-        <AlertDialogContent className="bg-white">
+        <AlertDialogContent className="bg-blue-50 dark:bg-blue-900 border-blue-200 dark:border-blue-700">
           <AlertDialogHeader>
-            <AlertDialogTitle className="flex items-center gap-2 text-gray-900">
+            <AlertDialogTitle className="flex items-center gap-2 text-blue-900 dark:text-blue-100">
               <AlertTriangle className="h-5 w-5 text-red-500" />
               Delete Agent
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-gray-600">
+            <AlertDialogDescription className="text-blue-700 dark:text-blue-300">
               Are you sure you want to delete this agent? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="text-gray-900 border-gray-200 hover:bg-gray-100">
+            <AlertDialogCancel className="text-blue-900 dark:text-blue-100 border-blue-200 dark:border-blue-600 hover:bg-blue-100 dark:hover:bg-blue-800">
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction 
