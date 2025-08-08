@@ -271,52 +271,120 @@ router.post('/', async (req, res) => {
   try {
     await connection.beginTransaction();
 
-    const { agent_id, agent_name, user_name, user_contact, prize_label, is_win, product_id } = req.body;
+    // Normalize incoming payload to support multiple client shapes
+    const body = req.body || {};
+    const agent_id = body.agent_id || body.agentId || null;
+    const agent_name = body.agent_name || body.agentName || 'Unknown Agent';
+    const user_name = body.user_name || body.name || body.userName || 'Anonymous';
+    const user_contact = body.user_contact || body.email || body.phone || body.contact || 'N/A';
+    const prize_label = body.prize_label || body.prize || body.prizeLabel;
+    const is_win = typeof body.is_win !== 'undefined' ? body.is_win : body.isWin;
+    let product_id = body.product_id || body.productId || null;
+
     // Validate required fields
-    if (!agent_id || !user_name || !user_contact || prize_label === undefined || is_win === undefined) {
+    if (!prize_label || typeof is_win === 'undefined') {
       await connection.rollback();
       return res.status(400).json({ message: 'Missing required fields' });
     }
-    // If it's a win and product_id is provided, check and update inventory atomically
-    if (is_win && product_id) {
-      // First check if there's available quantity
-      const [inventoryCheck] = await connection.query(`
-        SELECT available_quantity 
-        FROM product_inventory 
-        WHERE agent_id = ? AND product_id = ? 
-        FOR UPDATE
-      `, [agent_id, product_id]);
 
-      if (inventoryCheck.length === 0 || inventoryCheck[0].available_quantity <= 0) {
-        await connection.rollback();
-        return res.status(400).json({ 
-          message: 'No prize available', 
-          error: 'Insufficient inventory' 
-        });
-      }
+    // If it's a win, verify and decrement inventory
+    if (is_win) {
+      // Prefer agent-specific inventory when agent_id and product_id are provided
+      if (agent_id && product_id) {
+        // First check if there's available quantity
+        const [inventoryCheck] = await connection.query(`
+          SELECT available_quantity 
+          FROM product_inventory 
+          WHERE agent_id = ? AND product_id = ? 
+          FOR UPDATE
+        `, [agent_id, product_id]);
 
-      // Update inventory with atomic operation
-      const [updateResult] = await connection.query(`
-        UPDATE product_inventory 
-        SET available_quantity = available_quantity - 1,
-            distributed_quantity = distributed_quantity + 1,
-            last_updated = NOW()
-        WHERE agent_id = ? AND product_id = ? AND available_quantity > 0
-      `, [agent_id, product_id]);
+        if (inventoryCheck.length === 0 || inventoryCheck[0].available_quantity <= 0) {
+          await connection.rollback();
+          return res.status(400).json({ 
+            message: 'No prize available', 
+            error: 'Insufficient inventory' 
+          });
+        }
 
-      if (updateResult.affectedRows === 0) {
-        await connection.rollback();
-        return res.status(400).json({ 
-          message: 'No prize available', 
-          error: 'Inventory was depleted during transaction' 
-        });
+        // Update inventory with atomic operation
+        const [updateResult] = await connection.query(`
+          UPDATE product_inventory 
+          SET available_quantity = available_quantity - 1,
+              distributed_quantity = distributed_quantity + 1,
+              last_updated = NOW()
+          WHERE agent_id = ? AND product_id = ? AND available_quantity > 0
+        `, [agent_id, product_id]);
+
+        if (updateResult.affectedRows === 0) {
+          await connection.rollback();
+          return res.status(400).json({ 
+            message: 'No prize available', 
+            error: 'Inventory was depleted during transaction' 
+          });
+        }
+      } else {
+        // Fallback to global product stock based on product name
+        // Ensure product exists and map to its ID if not provided
+        if (!product_id) {
+          const [prod] = await connection.query(
+            'SELECT id FROM products WHERE LOWER(name) = LOWER(?) LIMIT 1',
+            [String(prize_label).trim()]
+          );
+          if (prod.length > 0) {
+            product_id = prod[0].id;
+          }
+        }
+
+        if (!product_id) {
+          await connection.rollback();
+          return res.status(400).json({ message: 'Product not found for this prize' });
+        }
+
+        // Ensure product_stock exists
+        await connection.query(`
+          CREATE TABLE IF NOT EXISTS product_stock (
+            product_id INT PRIMARY KEY,
+            total_quantity INT NOT NULL DEFAULT 0,
+            available_quantity INT NOT NULL DEFAULT 0,
+            distributed_quantity INT NOT NULL DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+          )
+        `);
+
+        // Check availability
+        const [stockCheck] = await connection.query(
+          'SELECT available_quantity FROM product_stock WHERE product_id = ? FOR UPDATE',
+          [product_id]
+        );
+
+        if (stockCheck.length === 0 || stockCheck[0].available_quantity <= 0) {
+          await connection.rollback();
+          return res.status(400).json({ message: 'No prize available', error: 'Insufficient global stock' });
+        }
+
+        // Decrement stock atomically
+        const [updateStock] = await connection.query(
+          `UPDATE product_stock 
+           SET available_quantity = available_quantity - 1,
+               distributed_quantity = distributed_quantity + 1
+           WHERE product_id = ? AND available_quantity > 0`,
+          [product_id]
+        );
+
+        if (updateStock.affectedRows === 0) {
+          await connection.rollback();
+          return res.status(400).json({ message: 'No prize available', error: 'Stock was depleted during transaction' });
+        }
       }
     }
+
     // Insert the spin result
     const [result] = await connection.query(
       `INSERT INTO spin_results (agent_id, agent_name, user_name, user_contact, prize_label, is_win, date) 
        VALUES (?, ?, ?, ?, ?, ?, NOW())`,
-      [agent_id, agent_name || 'Unknown Agent', user_name, user_contact, prize_label, is_win]
+      [agent_id, agent_name, user_name, user_contact, prize_label, is_win]
     );
 
     await connection.commit();

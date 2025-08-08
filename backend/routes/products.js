@@ -61,12 +61,13 @@ router.get('/', async (req, res) => {
     const [products] = await req.db.query(`
       SELECT 
         p.id, p.name, p.description, p.created_at, p.updated_at,
-        IFNULL(SUM(pi.total_quantity), 0) AS total_quantity,
-        IFNULL(SUM(pi.available_quantity), 0) AS available_quantity,
-        IFNULL(SUM(pi.distributed_quantity), 0) AS distributed_quantity
+        COALESCE(ps.total_quantity, 0) + IFNULL(SUM(pi.total_quantity), 0) AS total_quantity,
+        COALESCE(ps.available_quantity, 0) + IFNULL(SUM(pi.available_quantity), 0) AS available_quantity,
+        COALESCE(ps.distributed_quantity, 0) + IFNULL(SUM(pi.distributed_quantity), 0) AS distributed_quantity
       FROM products p
+      LEFT JOIN product_stock ps ON ps.product_id = p.id
       LEFT JOIN product_inventory pi ON pi.product_id = p.id
-      GROUP BY p.id, p.name, p.description, p.created_at, p.updated_at
+      GROUP BY p.id, p.name, p.description, p.created_at, p.updated_at, ps.total_quantity, ps.available_quantity, ps.distributed_quantity
       ORDER BY p.created_at DESC
     `);
     res.json(products);
