@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
@@ -215,285 +214,287 @@ export function ProductManagement() {
   };
 
   return (
-    <div className="space-y-6 text-black">
-      {/* Products Section */}
-      <Card className="bg-white">
-        <CardHeader>
-          <CardTitle className="flex justify-between items-center text-black">
-            <span className="text-black">Products</span>
-            <Button onClick={() => openProductDialog()} className="flex items-center gap-2 text-white">
-              <Plus className="h-4 w-4" />
-              Add Product
-            </Button>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="text-black font-semibold">Name</TableHead>
-                <TableHead className="text-black font-semibold">Description</TableHead>
-                <TableHead className="text-black font-semibold">Total Won / Initial Quantity</TableHead>
-                <TableHead className="text-black font-semibold">Created At</TableHead>
-                <TableHead className="text-right text-black font-semibold">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {products.map((product) => (
-                <TableRow key={product.id}>
-                  <TableCell className="font-medium text-black">{product.name}</TableCell>
-                  <TableCell className="text-black">{product.description}</TableCell>
-                  <TableCell className="text-black">{`${(product.total_quantity ?? 0) - (product.available_quantity ?? 0)} / ${product.total_quantity ?? 0}`}</TableCell>
-                  <TableCell className="text-black">{new Date(product.created_at).toLocaleDateString()}</TableCell>
-                  <TableCell className="text-right space-x-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => openProductDialog(product)}
-                      className="text-black hover:text-black hover:bg-gray-100"
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button variant="ghost" size="sm" className="text-black hover:text-black hover:bg-gray-100">
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent className="bg-white">
-                        <AlertDialogHeader>
-                          <AlertDialogTitle className="text-black">Delete Product</AlertDialogTitle>
-                          <AlertDialogDescription className="text-black">
-                            Are you sure you want to delete this product? This action cannot be undone.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel className="text-black bg-white border-gray-300 hover:bg-gray-50 hover:text-black">Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => deleteProductMutation.mutate(product.id)} className="text-white">
-                            Delete
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </TableCell>
+    <div className="min-h-screen bg-blue-500 p-6">
+      <div className="space-y-6 text-black">
+        {/* Products Section */}
+        <Card className="bg-white">
+          <CardHeader>
+            <CardTitle className="flex justify-between items-center text-black">
+              <span className="text-black">Products</span>
+              <Button onClick={() => openProductDialog()} className="flex items-center gap-2 text-white">
+                <Plus className="h-4 w-4" />
+                Add Product
+              </Button>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="text-black font-semibold">Name</TableHead>
+                  <TableHead className="text-black font-semibold">Description</TableHead>
+                  <TableHead className="text-black font-semibold">Total Won / Initial Quantity</TableHead>
+                  <TableHead className="text-black font-semibold">Created At</TableHead>
+                  <TableHead className="text-right text-black font-semibold">Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+              </TableHeader>
+              <TableBody>
+                {products.map((product) => (
+                  <TableRow key={product.id}>
+                    <TableCell className="font-medium text-black">{product.name}</TableCell>
+                    <TableCell className="text-black">{product.description}</TableCell>
+                    <TableCell className="text-black">{`${(product.total_quantity ?? 0) - (product.available_quantity ?? 0)} / ${product.total_quantity ?? 0}`}</TableCell>
+                    <TableCell className="text-black">{new Date(product.created_at).toLocaleDateString()}</TableCell>
+                    <TableCell className="text-right space-x-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => openProductDialog(product)}
+                        className="text-black hover:text-black hover:bg-gray-100"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="ghost" size="sm" className="text-black hover:text-black hover:bg-gray-100">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent className="bg-white">
+                          <AlertDialogHeader>
+                            <AlertDialogTitle className="text-black">Delete Product</AlertDialogTitle>
+                            <AlertDialogDescription className="text-black">
+                              Are you sure you want to delete this product? This action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel className="text-black bg-white border-gray-300 hover:bg-gray-50 hover:text-black">Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => deleteProductMutation.mutate(product.id)} className="text-white">
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
 
-      {/* Product Assignments Section */}
-      <Card className="bg-white">
-        <CardHeader>
-          <CardTitle className="flex justify-between items-center text-black">
-            <span className="text-black">Product Assignments</span>
-            <Button onClick={() => openAssignmentDialog()} className="flex items-center gap-2 text-white">
-              <Plus className="h-4 w-4" />
-              Assign Product
-            </Button>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="text-black font-semibold">Agent ID</TableHead>
-                <TableHead className="text-black font-semibold">Agent Name</TableHead>
-                <TableHead className="text-black font-semibold">Product</TableHead>
-                <TableHead className="text-black font-semibold">Quantity</TableHead>
-                <TableHead className="text-black font-semibold">Assigned At</TableHead>
-                <TableHead className="text-right text-black font-semibold">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {assignments.map((assignment) => (
-                <TableRow key={assignment.id}>
-                  <TableCell className="text-black">{assignment.agent_id}</TableCell>
-                  <TableCell className="text-black">{assignment.agent_name}</TableCell>
-                  <TableCell className="text-black">{assignment.product_name}</TableCell>
-                  <TableCell className="text-black">{assignment.quantity}</TableCell>
-                  <TableCell className="text-black">{new Date(assignment.created_at).toLocaleDateString()}</TableCell>
-                  <TableCell className="text-right space-x-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => openAssignmentDialog(assignment)}
-                      className="text-black hover:text-black hover:bg-gray-100"
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button variant="ghost" size="sm" className="text-black hover:text-black hover:bg-gray-100">
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent className="bg-white">
-                        <AlertDialogHeader>
-                          <AlertDialogTitle className="text-black">Delete Assignment</AlertDialogTitle>
-                          <AlertDialogDescription className="text-black">
-                            Are you sure you want to delete this product assignment?
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel className="text-black bg-white border-gray-300 hover:bg-gray-50 hover:text-black">Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => deleteAssignmentMutation.mutate(assignment.id)} className="text-white">
-                            Delete
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </TableCell>
+        {/* Product Assignments Section */}
+        <Card className="bg-white">
+          <CardHeader>
+            <CardTitle className="flex justify-between items-center text-black">
+              <span className="text-black">Product Assignments</span>
+              <Button onClick={() => openAssignmentDialog()} className="flex items-center gap-2 text-white">
+                <Plus className="h-4 w-4" />
+                Assign Product
+              </Button>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="text-black font-semibold">Agent ID</TableHead>
+                  <TableHead className="text-black font-semibold">Agent Name</TableHead>
+                  <TableHead className="text-black font-semibold">Product</TableHead>
+                  <TableHead className="text-black font-semibold">Quantity</TableHead>
+                  <TableHead className="text-black font-semibold">Assigned At</TableHead>
+                  <TableHead className="text-right text-black font-semibold">Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+              </TableHeader>
+              <TableBody>
+                {assignments.map((assignment) => (
+                  <TableRow key={assignment.id}>
+                    <TableCell className="text-black">{assignment.agent_id}</TableCell>
+                    <TableCell className="text-black">{assignment.agent_name}</TableCell>
+                    <TableCell className="text-black">{assignment.product_name}</TableCell>
+                    <TableCell className="text-black">{assignment.quantity}</TableCell>
+                    <TableCell className="text-black">{new Date(assignment.created_at).toLocaleDateString()}</TableCell>
+                    <TableCell className="text-right space-x-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => openAssignmentDialog(assignment)}
+                        className="text-black hover:text-black hover:bg-gray-100"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="ghost" size="sm" className="text-black hover:text-black hover:bg-gray-100">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent className="bg-white">
+                          <AlertDialogHeader>
+                            <AlertDialogTitle className="text-black">Delete Assignment</AlertDialogTitle>
+                            <AlertDialogDescription className="text-black">
+                              Are you sure you want to delete this product assignment?
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel className="text-black bg-white border-gray-300 hover:bg-gray-50 hover:text-black">Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => deleteAssignmentMutation.mutate(assignment.id)} className="text-white">
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
 
-      {/* Product Dialog */}
-      <Dialog open={productDialogOpen} onOpenChange={setProductDialogOpen}>
-        <DialogContent className="bg-white">
-          <DialogHeader>
-            <DialogTitle className="text-black">{editingProduct ? 'Edit Product' : 'Add Product'}</DialogTitle>
-            <DialogDescription className="text-black">
-              {editingProduct ? 'Update product details' : 'Create a new product'}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="name" className="text-black font-medium">Product Name *</Label>
-              <Input
-                id="name"
-                value={productForm.name}
-                onChange={(e) => setProductForm({ ...productForm, name: e.target.value })}
-                placeholder="Enter product name"
-                className="text-black bg-white border-gray-300 placeholder:text-gray-500"
-                required
-              />
-            </div>
-            <div>
-              <Label htmlFor="description" className="text-black font-medium">Description *</Label>
-              <Input
-                id="description"
-                value={productForm.description}
-                onChange={(e) => setProductForm({ ...productForm, description: e.target.value })}
-                placeholder="Enter product description"
-                className="text-black bg-white border-gray-300 placeholder:text-gray-500"
-                required
-              />
-            </div>
-            {!editingProduct && (
+        {/* Product Dialog */}
+        <Dialog open={productDialogOpen} onOpenChange={setProductDialogOpen}>
+          <DialogContent className="bg-white">
+            <DialogHeader>
+              <DialogTitle className="text-black">{editingProduct ? 'Edit Product' : 'Add Product'}</DialogTitle>
+              <DialogDescription className="text-black">
+                {editingProduct ? 'Update product details' : 'Create a new product'}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
               <div>
-                <Label htmlFor="quantity" className="text-black font-medium">Number of prizes to be won (optional)</Label>
+                <Label htmlFor="name" className="text-black font-medium">Product Name *</Label>
+                <Input
+                  id="name"
+                  value={productForm.name}
+                  onChange={(e) => setProductForm({ ...productForm, name: e.target.value })}
+                  placeholder="Enter product name"
+                  className="text-black bg-white border-gray-300 placeholder:text-gray-500"
+                  required
+                />
+              </div>
+              <div>
+                <Label htmlFor="description" className="text-black font-medium">Description *</Label>
+                <Input
+                  id="description"
+                  value={productForm.description}
+                  onChange={(e) => setProductForm({ ...productForm, description: e.target.value })}
+                  placeholder="Enter product description"
+                  className="text-black bg-white border-gray-300 placeholder:text-gray-500"
+                  required
+                />
+              </div>
+              {!editingProduct && (
+                <div>
+                  <Label htmlFor="quantity" className="text-black font-medium">Number of prizes to be won (optional)</Label>
+                  <Input
+                    id="quantity"
+                    type="number"
+                    min={0}
+                    value={productForm.quantity}
+                    onChange={(e) => setProductForm({ ...productForm, quantity: e.target.value })}
+                    placeholder="Enter initial stock without assigning an agent"
+                    className="text-black bg-white border-gray-300 placeholder:text-gray-500"
+                  />
+                </div>
+              )}
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setProductDialogOpen(false)} className="text-black bg-white border-gray-300 hover:bg-gray-50 hover:text-black">
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleProductSubmit}
+                disabled={createProductMutation.isPending || updateProductMutation.isPending}
+                className="text-white"
+              >
+                {createProductMutation.isPending || updateProductMutation.isPending 
+                  ? "Saving..." 
+                  : (editingProduct ? 'Update' : 'Create')
+                }
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Assignment Dialog */}
+        <Dialog open={assignmentDialogOpen} onOpenChange={setAssignmentDialogOpen}>
+          <DialogContent className="bg-white">
+            <DialogHeader>
+              <DialogTitle className="text-black">{editingAssignment ? 'Edit Assignment' : 'Assign Product'}</DialogTitle>
+              <DialogDescription className="text-black">
+                {editingAssignment ? 'Update product assignment' : 'Assign a product to an agent'}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <Label className="text-black font-medium">Agent *</Label>
+                <Select
+                  value={assignmentForm.agent_id}
+                  onValueChange={(value) => setAssignmentForm({ ...assignmentForm, agent_id: value })}
+                >
+                  <SelectTrigger className="text-black bg-white border-gray-300">
+                    <SelectValue placeholder="Select an agent" className="text-black" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white border-gray-200">
+                    {agents.map((agent: any) => (
+                      <SelectItem key={agent.agent_id} value={agent.agent_id} className="text-black hover:bg-gray-50 focus:bg-gray-50">
+                        {agent.name} ({agent.agent_id})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label className="text-black font-medium">Product *</Label>
+                <Select
+                  value={assignmentForm.product_id}
+                  onValueChange={(value) => setAssignmentForm({ ...assignmentForm, product_id: value })}
+                >
+                  <SelectTrigger className="text-black bg-white border-gray-300">
+                    <SelectValue placeholder="Select a product" className="text-black" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white border-gray-200">
+                    {products.map((product) => (
+                      <SelectItem key={product.id} value={product.id.toString()} className="text-black hover:bg-gray-50 focus:bg-gray-50">
+                        {product.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="quantity" className="text-black font-medium">Quantity *</Label>
                 <Input
                   id="quantity"
                   type="number"
-                  min={0}
-                  value={productForm.quantity}
-                  onChange={(e) => setProductForm({ ...productForm, quantity: e.target.value })}
-                  placeholder="Enter initial stock without assigning an agent"
+                  value={assignmentForm.quantity}
+                  onChange={(e) => setAssignmentForm({ ...assignmentForm, quantity: e.target.value })}
+                  placeholder="Enter quantity"
+                  min="1"
                   className="text-black bg-white border-gray-300 placeholder:text-gray-500"
+                  required
                 />
               </div>
-            )}
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setProductDialogOpen(false)} className="text-black bg-white border-gray-300 hover:bg-gray-50 hover:text-black">
-              Cancel
-            </Button>
-            <Button 
-              onClick={handleProductSubmit}
-              disabled={createProductMutation.isPending || updateProductMutation.isPending}
-              className="text-white"
-            >
-              {createProductMutation.isPending || updateProductMutation.isPending 
-                ? "Saving..." 
-                : (editingProduct ? 'Update' : 'Create')
-              }
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Assignment Dialog */}
-      <Dialog open={assignmentDialogOpen} onOpenChange={setAssignmentDialogOpen}>
-        <DialogContent className="bg-white">
-          <DialogHeader>
-            <DialogTitle className="text-black">{editingAssignment ? 'Edit Assignment' : 'Assign Product'}</DialogTitle>
-            <DialogDescription className="text-black">
-              {editingAssignment ? 'Update product assignment' : 'Assign a product to an agent'}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <Label className="text-black font-medium">Agent *</Label>
-              <Select
-                value={assignmentForm.agent_id}
-                onValueChange={(value) => setAssignmentForm({ ...assignmentForm, agent_id: value })}
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setAssignmentDialogOpen(false)} className="text-black bg-white border-gray-300 hover:bg-gray-50 hover:text-black">
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleAssignmentSubmit}
+                disabled={createAssignmentMutation.isPending || updateAssignmentMutation.isPending}
+                className="text-white"
               >
-                <SelectTrigger className="text-black bg-white border-gray-300">
-                  <SelectValue placeholder="Select an agent" className="text-black" />
-                </SelectTrigger>
-                <SelectContent className="bg-white border-gray-200">
-                  {agents.map((agent: any) => (
-                    <SelectItem key={agent.agent_id} value={agent.agent_id} className="text-black hover:bg-gray-50 focus:bg-gray-50">
-                      {agent.name} ({agent.agent_id})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label className="text-black font-medium">Product *</Label>
-              <Select
-                value={assignmentForm.product_id}
-                onValueChange={(value) => setAssignmentForm({ ...assignmentForm, product_id: value })}
-              >
-                <SelectTrigger className="text-black bg-white border-gray-300">
-                  <SelectValue placeholder="Select a product" className="text-black" />
-                </SelectTrigger>
-                <SelectContent className="bg-white border-gray-200">
-                  {products.map((product) => (
-                    <SelectItem key={product.id} value={product.id.toString()} className="text-black hover:bg-gray-50 focus:bg-gray-50">
-                      {product.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label htmlFor="quantity" className="text-black font-medium">Quantity *</Label>
-              <Input
-                id="quantity"
-                type="number"
-                value={assignmentForm.quantity}
-                onChange={(e) => setAssignmentForm({ ...assignmentForm, quantity: e.target.value })}
-                placeholder="Enter quantity"
-                min="1"
-                className="text-black bg-white border-gray-300 placeholder:text-gray-500"
-                required
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setAssignmentDialogOpen(false)} className="text-black bg-white border-gray-300 hover:bg-gray-50 hover:text-black">
-              Cancel
-            </Button>
-            <Button 
-              onClick={handleAssignmentSubmit}
-              disabled={createAssignmentMutation.isPending || updateAssignmentMutation.isPending}
-              className="text-white"
-            >
-              {createAssignmentMutation.isPending || updateAssignmentMutation.isPending 
-                ? "Saving..." 
-                : (editingAssignment ? 'Update' : 'Assign')
-              }
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+                {createAssignmentMutation.isPending || updateAssignmentMutation.isPending 
+                  ? "Saving..." 
+                  : (editingAssignment ? 'Update' : 'Assign')
+                }
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 }
